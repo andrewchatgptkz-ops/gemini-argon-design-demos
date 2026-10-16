@@ -1,0 +1,2393 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Веб-Дизайн 2026: Интерактивная Энциклопедия Стилей</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter, Space Grotesk, JetBrains Mono, Playfair Display, Syne -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,600&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* ==========================================
+           GLOBAL CSS VARIABLES & THEME DEFINITIONS
+           ========================================== */
+        :root {
+            --bg-primary: #F4F5F8;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #EAECEF;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --accent: #4F46E5;
+            --accent-hover: #4338CA;
+            --accent-soft: rgba(79, 70, 229, 0.12);
+            --border-color: rgba(15, 23, 42, 0.08);
+            --border-width: 1px;
+            --radius-main: 24px;
+            --radius-sm: 14px;
+            --shadow-main: 0 10px 30px -10px rgba(15, 23, 42, 0.07), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+            --font-heading: 'Inter', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        /* 1. BENTO UI THEME */
+        body.theme-bento {
+            --bg-primary: #F2F4F8;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F8FAFC;
+            --text-primary: #090D16;
+            --text-secondary: #525E75;
+            --accent: #4F46E5;
+            --accent-hover: #3730A3;
+            --accent-soft: rgba(79, 70, 229, 0.1);
+            --border-color: rgba(15, 23, 42, 0.08);
+            --border-width: 1px;
+            --radius-main: 28px;
+            --radius-sm: 16px;
+            --shadow-main: 0 12px 32px -8px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+            --font-heading: 'Inter', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            background-image: radial-gradient(rgba(79, 70, 229, 0.07) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* 2. NEO-BRUTALISM THEME */
+        body.theme-brutalism {
+            --bg-primary: #FFFDF5;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #FFDE00;
+            --text-primary: #000000;
+            --text-secondary: #1E1E1E;
+            --accent: #FF5277;
+            --accent-hover: #FF2E5B;
+            --accent-soft: #C4F5FC;
+            --border-color: #000000;
+            --border-width: 3px;
+            --radius-main: 8px;
+            --radius-sm: 4px;
+            --shadow-main: 6px 6px 0px #000000;
+            --font-heading: 'Space Grotesk', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+            background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* 3. LIQUID GLASS THEME */
+        body.theme-glass {
+            --bg-primary: #050711;
+            --bg-secondary: rgba(255, 255, 255, 0.06);
+            --bg-tertiary: rgba(255, 255, 255, 0.1);
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --accent: #38BDF8;
+            --accent-hover: #7DD3FC;
+            --accent-soft: rgba(56, 189, 248, 0.15);
+            --border-color: rgba(255, 255, 255, 0.18);
+            --border-width: 1px;
+            --radius-main: 26px;
+            --radius-sm: 16px;
+            --shadow-main: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+            --font-heading: 'Inter', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            background: radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.18), transparent 40%),
+                        radial-gradient(circle at 85% 25%, rgba(168, 85, 247, 0.2), transparent 45%),
+                        radial-gradient(circle at 50% 85%, rgba(236, 72, 153, 0.15), transparent 45%),
+                        #050711;
+            background-attachment: fixed;
+        }
+
+        /* 4. TACTILE SKEUOMORPHISM THEME */
+        body.theme-skeuo {
+            --bg-primary: #E8E6DF; /* Pantone Cloud Dancer inspired warm chassis */
+            --bg-secondary: #F0EEE9;
+            --bg-tertiary: #E1DFD7;
+            --text-primary: #1F2124;
+            --text-secondary: #5A5D64;
+            --accent: #EA580C;
+            --accent-hover: #C2410C;
+            --accent-soft: rgba(234, 88, 12, 0.12);
+            --border-color: rgba(255, 255, 255, 0.7);
+            --border-width: 1px;
+            --radius-main: 20px;
+            --radius-sm: 12px;
+            --shadow-main: 8px 8px 18px #CBC9C1, -8px -8px 18px #FFFFFF;
+            --font-heading: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        /* 5. KINETIC & CRAFT THEME */
+        body.theme-kinetic {
+            --bg-primary: #FBF9F5;
+            --bg-secondary: #F4EFE6;
+            --bg-tertiary: #EAE2D3;
+            --text-primary: #141413;
+            --text-secondary: #4A4842;
+            --accent: #D9381E;
+            --accent-hover: #B82B14;
+            --accent-soft: rgba(217, 56, 30, 0.12);
+            --border-color: #141413;
+            --border-width: 1px;
+            --radius-main: 4px;
+            --radius-sm: 2px;
+            --shadow-main: 0 12px 30px rgba(20, 20, 19, 0.06);
+            --font-heading: 'Syne', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        /* 6. RETRO-DIGITAL / TERMINAL THEME */
+        body.theme-retro {
+            --bg-primary: #070B08;
+            --bg-secondary: #0D1510;
+            --bg-tertiary: #142219;
+            --text-primary: #00FF66;
+            --text-secondary: #4ADE80;
+            --accent: #00FF66;
+            --accent-hover: #86EFAC;
+            --accent-soft: rgba(0, 255, 102, 0.14);
+            --border-color: #00FF66;
+            --border-width: 1px;
+            --radius-main: 0px;
+            --radius-sm: 0px;
+            --shadow-main: 0 0 20px rgba(0, 255, 102, 0.15), inset 0 0 15px rgba(0, 255, 102, 0.05);
+            --font-heading: 'JetBrains Mono', monospace;
+            --font-body: 'JetBrains Mono', monospace;
+            background-image: radial-gradient(rgba(0, 255, 102, 0.12) 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+
+        /* ==========================================
+           BASE ELEMENT STYLING USING VARIABLES
+           ========================================== */
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            transition: background-color 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                        color 0.35s ease;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .font-display {
+            font-family: var(--font-heading);
+        }
+
+        .font-serif-editorial {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .font-mono-code {
+            font-family: var(--font-mono);
+        }
+
+        .style-card {
+            background: var(--bg-secondary);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-main);
+            box-shadow: var(--shadow-main);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body.theme-glass .style-card {
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
+        }
+
+        .style-subcard {
+            background: var(--bg-tertiary);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+        }
+
+        .style-btn {
+            background: var(--accent);
+            color: #FFFFFF;
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+        }
+
+        body.theme-retro .style-btn {
+            background: #00FF66;
+            color: #050906;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.theme-brutalism .style-btn {
+            color: #000000;
+            font-weight: 700;
+            box-shadow: 4px 4px 0px #000000;
+        }
+        body.theme-brutalism .style-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000000;
+        }
+        body.theme-brutalism .style-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #000000;
+        }
+
+        /* ==========================================
+           SPECIAL EFFECTS FOR PLAYGROUNDS
+           ========================================== */
+        /* Marquee Animation for Neo-Brutalism */
+        @keyframes marqueeScroll {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: marqueeScroll 16s linear infinite;
+        }
+        .marquee-track.paused {
+            animation-play-state: paused;
+        }
+        .marquee-track.reverse {
+            animation-direction: reverse;
+        }
+
+        /* Floating Orbs for Liquid Glass */
+        @keyframes floatOrb1 {
+            0%, 100% { transform: translate(0px, 0px) scale(1); }
+            50% { transform: translate(55px, -35px) scale(1.12); }
+        }
+        @keyframes floatOrb2 {
+            0%, 100% { transform: translate(0px, 0px) scale(1); }
+            50% { transform: translate(-65px, 45px) scale(0.92); }
+        }
+        @keyframes floatOrb3 {
+            0%, 100% { transform: translate(0px, 0px) scale(1); }
+            50% { transform: translate(35px, 50px) scale(1.08); }
+        }
+        .orb-anim-1 { animation: floatOrb1 7s ease-in-out infinite; }
+        .orb-anim-2 { animation: floatOrb2 9s ease-in-out infinite; }
+        .orb-anim-3 { animation: floatOrb3 8s ease-in-out infinite; }
+
+        /* Tactile Skeuomorphism Hardware Controls */
+        .skeuo-chassis-light {
+            background: linear-gradient(145deg, #F4F2ED, #E3E0D8);
+            box-shadow: 12px 12px 28px #C7C4BC, -12px -12px 28px #FFFFFF, inset 0 1px 1px rgba(255,255,255,0.9);
+            color: #1F2124;
+        }
+        .skeuo-chassis-dark {
+            background: linear-gradient(145deg, #262930, #191B20);
+            box-shadow: 12px 12px 28px #101215, -8px -8px 20px #323640, inset 0 1px 1px rgba(255,255,255,0.12);
+            color: #F1F5F9;
+        }
+        .skeuo-pad-light {
+            background: linear-gradient(145deg, #F7F5F0, #DFDCD4);
+            box-shadow: 6px 6px 12px #C5C2BA, -6px -6px 12px #FFFFFF, inset 0 1px 1px rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.6);
+            transition: all 0.12s ease;
+        }
+        .skeuo-pad-light:active, .skeuo-pad-light.pressed {
+            background: #E2DFD7;
+            box-shadow: inset 5px 5px 10px #C3C0B8, inset -5px -5px 10px #FFFFFF;
+            transform: translateY(2px);
+        }
+        .skeuo-pad-dark {
+            background: linear-gradient(145deg, #2B2F37, #1E2026);
+            box-shadow: 6px 6px 14px #121317, -5px -5px 12px #343942, inset 0 1px 1px rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.12s ease;
+        }
+        .skeuo-pad-dark:active, .skeuo-pad-dark.pressed {
+            background: #1B1D22;
+            box-shadow: inset 5px 5px 10px #101115, inset -4px -4px 10px #2B2F37;
+            transform: translateY(2px);
+        }
+
+        /* Retro CRT Scanlines & Glitch */
+        .crt-overlay {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.42) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.04),
+                rgba(0, 255, 0, 0.02),
+                rgba(0, 0, 255, 0.04)
+            );
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+        @keyframes glitchShake {
+            0% { transform: translate(0) skew(0deg); filter: hue-rotate(0deg); }
+            20% { transform: translate(-6px, 3px) skew(-4deg); filter: drop-shadow(4px 0 #ff0055) drop-shadow(-4px 0 #00ffff); }
+            40% { transform: translate(6px, -3px) skew(5deg); }
+            60% { transform: translate(-4px, -2px) skew(-2deg); filter: invert(0.15); }
+            80% { transform: translate(4px, 3px) skew(3deg); }
+            100% { transform: translate(0) skew(0deg); filter: hue-rotate(0deg); }
+        }
+        .glitch-active {
+            animation: glitchShake 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
+
+        /* Hand-drawn SVG stroke animation */
+        .hand-stroke {
+            stroke-dasharray: 600;
+            stroke-dashoffset: 600;
+            transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .hand-accents-on .hand-stroke {
+            stroke-dashoffset: 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="theme-bento min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <!-- ==========================================
+         STICKY TOP NAVIGATION & STYLE SWITCHER
+         ========================================== -->
+    <header class="sticky top-0 z-50 backdrop-blur-xl bg-opacity-85 border-b transition-all duration-300"
+            style="background-color: color-mix(in srgb, var(--bg-secondary) 85%, transparent); border-color: var(--border-color); border-bottom-width: var(--border-width);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <!-- Brand Title -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div id="brandBadge" class="w-10 h-10 flex items-center justify-center font-bold text-lg transition-all"
+                             style="background: var(--accent); color: #fff; border-radius: var(--radius-sm); border: var(--border-width) solid var(--border-color);">
+                            26
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-display font-bold text-base sm:text-lg tracking-tight">DESIGN ENCYCLOPEDIA</span>
+                                <span class="text-xs px-2 py-0.5 font-mono-code font-semibold"
+                                      style="background: var(--accent-soft); color: var(--accent); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                                    2026 EDITION
+                                </span>
+                            </div>
+                            <p class="text-xs hidden sm:block" style="color: var(--text-secondary);">
+                                Живая лаборатория 6 главных визуальных парадигм веб-дизайна
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Quick keyboard hint on mobile/tablet -->
+                    <div class="flex lg:hidden items-center gap-1.5 text-xs font-mono-code px-2.5 py-1"
+                         style="background: var(--bg-tertiary); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5" style="color: var(--accent);"></i>
+                        <span id="mobileActiveStyleLabel">1/6</span>
+                    </div>
+                </div>
+
+                <!-- 6 Style Switcher Pills -->
+                <nav aria-label="Переключатель стилей веб-дизайна" class="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0 no-scrollbar">
+                    <button onclick="switchStyle('bento')" id="tab-bento"
+                            class="style-tab-btn shrink-0 px-3.5 py-2 text-xs sm:text-sm font-medium flex items-center gap-2 transition-all">
+                        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                        <span>Bento UI</span>
+                    </button>
+                    <button onclick="switchStyle('brutalism')" id="tab-brutalism"
+                            class="style-tab-btn shrink-0 px-3.5 py-2 text-xs sm:text-sm font-medium flex items-center gap-2 transition-all">
+                        <i data-lucide="zap" class="w-4 h-4"></i>
+                        <span>Neo-Brutalism</span>
+                    </button>
+                    <button onclick="switchStyle('glass')" id="tab-glass"
+                            class="style-tab-btn shrink-0 px-3.5 py-2 text-xs sm:text-sm font-medium flex items-center gap-2 transition-all">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
+                        <span>Liquid Glass</span>
+                    </button>
+                    <button onclick="switchStyle('skeuo')" id="tab-skeuo"
+                            class="style-tab-btn shrink-0 px-3.5 py-2 text-xs sm:text-sm font-medium flex items-center gap-2 transition-all">
+                        <i data-lucide="sliders" class="w-4 h-4"></i>
+                        <span>Skeuomorphism</span>
+                    </button>
+                    <button onclick="switchStyle('kinetic')" id="tab-kinetic"
+                            class="style-tab-btn shrink-0 px-3.5 py-2 text-xs sm:text-sm font-medium flex items-center gap-2 transition-all">
+                        <i data-lucide="type" class="w-4 h-4"></i>
+                        <span>Kinetic & Craft</span>
+                    </button>
+                    <button onclick="switchStyle('retro')" id="tab-retro"
+                            class="style-tab-btn shrink-0 px-3.5 py-2 text-xs sm:text-sm font-medium flex items-center gap-2 transition-all">
+                        <i data-lucide="terminal" class="w-4 h-4"></i>
+                        <span>Retro-Digital</span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         MAIN CONTENT CONTAINER
+         ========================================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-12">
+
+        <!-- SECTION 1: HERO & PHILOSOPHY -->
+        <section id="heroSection" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            <!-- Left 8 cols: Manifesto & Story -->
+            <div class="lg:col-span-8 style-card p-6 sm:p-10 flex flex-col justify-between relative overflow-hidden">
+                <div>
+                    <!-- Top Meta Row -->
+                    <div class="flex flex-wrap items-center gap-3 mb-6">
+                        <span id="styleIndexBadge" class="px-3 py-1 text-xs font-mono-code font-bold uppercase tracking-wider"
+                              style="background: var(--accent); color: #fff; border-radius: var(--radius-sm);">
+                            СТИЛЬ #01
+                        </span>
+                        <span id="styleTrendBadge" class="px-3 py-1 text-xs font-mono-code font-semibold flex items-center gap-1.5"
+                              style="background: var(--accent-soft); color: var(--accent); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                            <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+                            <span id="styleTrendText">Пик популярности: 96/100</span>
+                        </span>
+                        <span id="styleFontBadge" class="px-3 py-1 text-xs font-mono-code"
+                              style="background: var(--bg-tertiary); color: var(--text-secondary); border-radius: var(--radius-sm);">
+                            Шрифт: Inter
+                        </span>
+                    </div>
+
+                    <!-- Main Title & Manifesto -->
+                    <h1 id="styleTitle" class="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-none mb-4">
+                        Bento UI (Бенто-сетка)
+                    </h1>
+                    <p id="styleManifesto" class="text-lg sm:text-xl font-medium mb-6" style="color: var(--accent);">
+                        «Идеальный порядок в эпоху информационной перегрузки: модульная архитектура, где каждый блок знает своё место».
+                    </p>
+                    <p id="styleDescription" class="text-sm sm:text-base leading-relaxed mb-8" style="color: var(--text-secondary);">
+                        Вдохновленный традиционными японскими ланч-боксами и популяризированный презентациями Apple и дашбордами Linear, Bento UI в 2026 году окончательно вытеснил скучные однородные 12-колоночные лендинги. Вместо бесконечного полотна текста пользователь получает компактную асимметричную витрину из 6–9 интерактивных ячеек разного веса.
+                    </p>
+                </div>
+
+                <!-- Industry Examples Strip -->
+                <div class="pt-6 border-t" style="border-color: var(--border-color);">
+                    <div class="text-xs font-mono-code uppercase tracking-wider mb-3" style="color: var(--text-secondary);">
+                        Примеры из индустрии (Кто задает стандарт в 2026):
+                    </div>
+                    <div id="styleExamplesContainer" class="flex flex-wrap gap-2.5">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right 4 cols: Visual Markers & DNA -->
+            <div class="lg:col-span-4 style-card p-6 sm:p-8 flex flex-col justify-between space-y-6">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-display text-lg font-bold flex items-center gap-2">
+                            <i data-lucide="fingerprint" class="w-5 h-5" style="color: var(--accent);"></i>
+                            <span>Визуальный ДНК стиля</span>
+                        </h2>
+                        <span class="text-xs font-mono-code" style="color: var(--text-secondary);">MARKERS</span>
+                    </div>
+
+                    <!-- 4 Visual Markers List -->
+                    <div id="visualMarkersList" class="space-y-3.5">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Live Palette Swatches -->
+                <div class="pt-4 border-t" style="border-color: var(--border-color);">
+                    <div class="text-xs font-mono-code uppercase tracking-wider mb-2.5 flex items-center justify-between" style="color: var(--text-secondary);">
+                        <span>Характерная палитра (клик — копировать HEX)</span>
+                    </div>
+                    <div id="paletteSwatches" class="grid grid-cols-5 gap-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: INTERACTIVE PLAYGROUND (UNIQUE PER STYLE) -->
+        <section class="style-card p-6 sm:p-10 relative overflow-hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-8 border-b" style="border-color: var(--border-color);">
+                <div>
+                    <div class="inline-flex items-center gap-2 text-xs font-mono-code uppercase tracking-wider px-2.5 py-1 mb-2"
+                         style="background: var(--accent-soft); color: var(--accent); border-radius: var(--radius-sm);">
+                        <i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>
+                        <span>Interactive Playground // Лаборатория стиля</span>
+                    </div>
+                    <h2 id="playgroundTitle" class="font-display text-2xl sm:text-3xl font-bold">
+                        Потрогайте особенности стиля руками
+                    </h2>
+                </div>
+                <p id="playgroundHint" class="text-xs sm:text-sm max-w-md" style="color: var(--text-secondary);">
+                    Взаимодействуйте с виджетами ниже, чтобы почувствовать микро-анимации и физику этого направления.
+                </p>
+            </div>
+
+            <!-- Dynamic Playground Mount Point -->
+            <div id="playgroundMount">
+                <!-- Injected by renderPlayground() -->
+            </div>
+        </section>
+
+        <!-- SECTION 3: APPLICABILITY MATRIX (WHEN TO USE VS WHEN NOT TO USE) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- When TO USE -->
+            <div class="style-card p-6 sm:p-8 border-l-4" style="border-left-color: #10B981;">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-500/15 text-emerald-500 shrink-0">
+                        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-mono-code uppercase tracking-wider text-emerald-500 font-semibold">BEST FIT // GREEN LIGHT</span>
+                        <h3 class="font-display text-xl font-bold">Когда СТОИТ применять</h3>
+                    </div>
+                </div>
+                <ul id="whenToUseList" class="space-y-4 text-sm sm:text-base">
+                    <!-- Populated dynamically -->
+                </ul>
+            </div>
+
+            <!-- When NOT TO USE -->
+            <div class="style-card p-6 sm:p-8 border-l-4" style="border-left-color: #F43F5E;">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-rose-500/15 text-rose-500 shrink-0">
+                        <i data-lucide="alert-octagon" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-mono-code uppercase tracking-wider text-rose-500 font-semibold">ANTI-PATTERNS // RED FLAGS</span>
+                        <h3 class="font-display text-xl font-bold">Когда НЕ стоит применять</h3>
+                    </div>
+                </div>
+                <ul id="whenNotToUseList" class="space-y-4 text-sm sm:text-base">
+                    <!-- Populated dynamically -->
+                </ul>
+            </div>
+        </section>
+
+        <!-- SECTION 4: CSS SNIPPET CHEATSHEET -->
+        <section class="style-card p-6 sm:p-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 flex items-center justify-center font-mono-code font-bold text-sm"
+                         style="background: var(--accent-soft); color: var(--accent); border-radius: var(--radius-sm);">
+                        CSS
+                    </div>
+                    <div>
+                        <h3 class="font-display text-lg sm:text-xl font-bold">Шпаргалка по CSS: Главный секрет стиля</h3>
+                        <p id="cssSecretCaption" class="text-xs sm:text-sm" style="color: var(--text-secondary);">
+                            Готовый фрагмент кода для воспроизведения эстетики в продакшене
+                        </p>
+                    </div>
+                </div>
+                <button onclick="copyCssSnippet()" class="style-btn px-4 py-2.5 text-xs sm:text-sm font-semibold flex items-center gap-2 self-start sm:self-auto">
+                    <i data-lucide="copy" class="w-4 h-4"></i>
+                    <span id="copyBtnText">Скопировать CSS</span>
+                </button>
+            </div>
+
+            <div class="relative rounded-xl overflow-hidden border" style="background: #0D1117; border-color: var(--border-color);">
+                <div class="flex items-center justify-between px-4 py-2 text-xs font-mono-code text-slate-400 border-b border-slate-800 bg-slate-900/70">
+                    <span id="cssFilename">style-recipe-2026.css</span>
+                    <span>CSS3 / Production Ready</span>
+                </div>
+                <pre class="p-4 sm:p-6 text-xs sm:text-sm font-mono-code text-emerald-300 overflow-x-auto leading-relaxed"><code id="cssCodeBlock"></code></pre>
+            </div>
+        </section>
+
+        <!-- BOTTOM QUICK STYLE PAGER -->
+        <section class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
+            <button onclick="navigateRelativeStyle(-1)" class="style-card px-5 py-3.5 text-sm font-semibold flex items-center gap-3 hover:opacity-90 w-full sm:w-auto justify-center">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>Предыдущий стиль</span>
+            </button>
+            <div class="text-xs font-mono-code text-center" style="color: var(--text-secondary);">
+                Совет: используйте клавиши <kbd class="px-1.5 py-0.5 border rounded" style="border-color: var(--border-color);">1</kbd> – <kbd class="px-1.5 py-0.5 border rounded" style="border-color: var(--border-color);">6</kbd> на клавиатуре для мгновенной смены темы
+            </div>
+            <button onclick="navigateRelativeStyle(1)" class="style-card px-5 py-3.5 text-sm font-semibold flex items-center gap-3 hover:opacity-90 w-full sm:w-auto justify-center">
+                <span>Следующий стиль</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+        </section>
+
+    </main>
+
+    <!-- ==========================================
+         CUSTOM TOAST NOTIFICATION (NO ALERT())
+         ========================================== -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 pointer-events-none transition-all duration-300 style-card px-4 py-3 flex items-center gap-3">
+        <div class="w-7 h-7 rounded-full flex items-center justify-center" style="background: var(--accent); color: #fff;">
+            <i data-lucide="check" class="w-4 h-4"></i>
+        </div>
+        <span id="toastMessage" class="text-sm font-medium">Скопировано в буфер обмена!</span>
+    </div>
+
+    <!-- ==========================================
+         APPLICATION DATA & INTERACTIVE LOGIC
+         ========================================== -->
+    <script>
+        const STYLE_ORDER = ['bento', 'brutalism', 'glass', 'skeuo', 'kinetic', 'retro'];
+        let currentStyleKey = 'bento';
+
+        /* Comprehensive 2026 Web Design Styles Data */
+        const STYLES_DATA = {
+            bento: {
+                index: "СТИЛЬ #01 // АРХИТЕКТУРА",
+                trend: "Пик популярности: 96/100 (Стандарт SaaS и AI)",
+                fontName: "Inter (Geometric Sans)",
+                title: "Bento UI (Бенто-сетка)",
+                manifesto: "«Идеальный порядок в эпоху информационной перегрузки: модульная архитектура, где каждый микроблок самодостаточен».",
+                description: "Вдохновленный японскими ланч-боксами бэнто и возведенный в культ презентациями Apple и интерфейсами Linear, Bento UI в 2026 году стал главным способом упаковки сложных фич продукта. Вместо монотонных текстовых секций пользователь видит сбалансированную CSS Grid матрицу из 6–9 разноразмерных плиток (1x1, 2x1, 2x2), где каждая ячейка — это живая микро-история, график или интерактивный переключатель.",
+                examples: [
+                    { name: "Apple Product Pages", role: "Эталон сводных карточек характеристик чипов M-серии и iOS" },
+                    { name: "Linear & Raycast", role: "Модульные Bento-витрины возможностей с тонкими 1px-границами" },
+                    { name: "Vercel & Supabase", role: "Интерактивные микроблоки с живой телеметрией и кодом" },
+                    { name: "Chronicle HQ", role: "Динамические пропорции контейнеров и плавная адаптивность" }
+                ],
+                markers: [
+                    { label: "Типографика", value: "Чистый гротеск (Inter / Geist), плотный трекинг заголовков (-0.03em) и крупные цифры метрик." },
+                    { label: "Палитра", value: "Нейтральная база (#F2F4F8 или глубокий графит) + сочные локальные акценты для главных ячеек." },
+                    { label: "Пространство", value: "CSS Grid с фиксированным gap (16px–24px), скругления 24px–28px и строгая вложенность." },
+                    { label: "Тени и границы", value: "Деликатный 1px бордер с прозрачностью 8% и мягкая рассеянная многослойная тень." }
+                ],
+                palette: ["#FFFFFF", "#F2F4F8", "#090D16", "#4F46E5", "#10B981"],
+                playgroundTitle: "Лаборатория Bento UI: Живая модульная сетка",
+                playgroundHint: "Переключайте акцентную тему сетки, меняйте размер ячейки 3 по клику, тестируйте калькулятор тарифа, график и встроенный фокус-таймер.",
+                whenToUse: [
+                    { title: "SaaS-платформы, AI-сервисы и IT-продукты", desc: "Идеально, когда нужно на одном экране показать 5–8 разнородных преимуществ (скорость, безопасность, аналитика, интеграции) без длинного скролла." },
+                    { title: "Дашборды, портфолио дизайнеров и документация", desc: "Позволяет объединить видео, графики, цитаты и интерактивные демо в единый аккуратный прямоугольник." },
+                    { title: "Mobile-First проекты с высокой плотностью данных", desc: "Плитки легко перестраиваются из 4-колоночной сетки в один столбец на смартфонах без потери визуальной иерархии." }
+                ],
+                whenNotToUse: [
+                    { title: "Лонгриды, медиа-издания и последовательный сторителлинг", desc: "В бенто-сетке взгляд скачет между крупными и малыми блоками. Если историю важно читать строго от начала к концу — сетка разрушит нарратив." },
+                    { title: "Сетка более чем из 10–12 карточек подряд", desc: "Исследования UX 2026 года показывают: если в одном блоке больше 9 ячеек, возникает «эффект кирпичной стены» и когнитивное утомление." },
+                    { title: "Люксовые fashion-бренды с упором на полноэкранные фото", desc: "Зажатие имиджевых фотографий в мелкие скругленные коробочки лишает бренд драматизма и воздуха." }
+                ],
+                cssCaption: "Адаптивная 4-колоночная Bento-матрица с использованием CSS Grid и плавных скруглений:",
+                cssFilename: "bento-grid-2026.css",
+                cssCode: `.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: minmax(180px, auto);
+  gap: 1.25rem;
+}
+
+.bento-card {
+  background: #ffffff;
+  border-radius: 28px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.06);
+  padding: 1.5rem;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-span-2 { grid-column: span 2; }
+.bento-row-2  { grid-row: span 2; }`
+            },
+
+            brutalism: {
+                index: "СТИЛЬ #02 // БУНТ И ЭНЕРГИЯ",
+                trend: "Пик популярности: 89/100 (Фаворит криэйторов и Web3)",
+                fontName: "Space Grotesk (Neo-Grotesque)",
+                title: "Neo-Brutalism (Необрутализм)",
+                manifesto: "«Долой стерильные шаблоны: честные черные контуры, жесткие тени без размытия и дофаминовые цвета».",
+                description: "Необрутализм (и его более зрелая форма 2026 года — Софт-брутализм) родился как протест против одинаковых корпоративных сайтов. Он берет сырую геометрию раннего веба и соединяет её с современной типографикой, иронией и тактильной физикой: кнопки здесь буквально вдавливаются в плоскость экрана, смыкая жесткую черную тень.",
+                examples: [
+                    { name: "Gumroad", role: "Пионер коммерческого необрутализма с черными обводками и яркими иллюстрациями" },
+                    { name: "Figma (Config & FigJam)", role: "Игривые стикеры, геометричные бейджи и сочные контрастные плашки" },
+                    { name: "Poolsuite / Vacation", role: "Смесь ретро-интерфейсов, ироничного копирайтинга и смелых рамок" },
+                    { name: "Lemonsqueezy & Indie SaaS", role: "Высококонверсионные страницы для digital-креаторов и молодежных медиа" }
+                ],
+                markers: [
+                    { label: "Типографика", value: "Характерный геометрический гротеск (Space Grotesk, Syne) крупного кегля, капс в бейджах." },
+                    { label: "Палитра", value: "Теплый бумажный фон (#FFFDF5) в паре с кислотными дофаминовыми акцентами (#FFDE00, #FF5277, #00F5D4)." },
+                    { label: "Пространство", value: "Явные разделения секций линиями, наслоение стикеров, бегущие строки (marquee)." },
+                    { label: "Тени и границы", value: "Сплошная черная рамка 2px–4px (#000) и жесткая смещенная тень 6px 6px 0px #000 без blur." }
+                ],
+                palette: ["#FFFDF5", "#FFDE00", "#FF5277", "#00F5D4", "#000000"],
+                playgroundTitle: "Лаборатория Neo-Brutalism: Конструктор + Генератор стикеров",
+                playgroundHint: "Крутите ползунки жесткой тени и обводки, кликайте по физическим кнопкам и штампуйте бруталистские стикеры прямо на холст!",
+                whenToUse: [
+                    { title: "Продукты для креаторов, дизайн-тулзы, ивенты и фестивали", desc: "Мгновенно выделяет бренд среди сотен «прилизанных» конкурентов и транслирует смелость, честность и самоиронию." },
+                    { title: "Маркетинговые спецпроекты, дропы мерча и D2C-бренды", desc: "Высокий визуальный контраст удерживает внимание зумеров и миллениалов, повышая кликабельность CTA-кнопок." },
+                    { title: "Пет-проекты и стартапы с ограниченным бюджетом на 3D", desc: "Необрутализм выглядит стильно и дорого за счет верстки и цвета, не требуя тяжелых 3D-рендеров." }
+                ],
+                whenNotToUse: [
+                    { title: "Банкинг, медицина, юридические и государственные сервисы", desc: "Кислотные цвета и «мультяшные» жесткие тени могут подорвать ощущение безопасности и консервативной надежности." },
+                    { title: "Сложные B2B ERP-системы с таблицами на тысячи строк", desc: "Если у каждой ячейки таблицы будет черная рамка в 3 пикселя и жесткая тень, глаза оператора устанут через 10 минут работы." },
+                    { title: "Проекты со слабым контролем доступности (WCAG)", desc: "Неосторожное сочетание кислотно-желтого и белого текста легко проваливает проверку читаемости." }
+                ],
+                cssCaption: "Формула физического нажатия кнопки со схлопыванием жесткой тени без размытия:",
+                cssFilename: "neo-brutal-button.css",
+                cssCode: `.brutal-card {
+  background: #FFDE00;
+  border: 3px solid #000000;
+  border-radius: 8px;
+  box-shadow: 6px 6px 0px #000000;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.brutal-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px #000000;
+}
+
+.brutal-card:active {
+  transform: translate(6px, 6px);
+  box-shadow: 0px 0px 0px #000000;
+}`
+            },
+
+            glass: {
+                index: "СТИЛЬ #03 // ГЛУБИНА И ОПТИКА",
+                trend: "Пик популярности: 94/100 (Эволюция Apple Liquid Glass & AI UI)",
+                fontName: "Inter (Optical Light/Medium)",
+                title: "Liquid Glass (Глассморфизм 2.0)",
+                manifesto: "«Многослойная оптика в темном пространстве: преломление света, спекулярные блики на гранях и живая глубина».",
+                description: "В 2026 году классический глассморфизм эволюционировал в Liquid Glass (под влиянием пространственных интерфейсов visionOS и обновленного дизайн-языка Apple и AI-ассистентов). Теперь это не просто размытый белый прямоугольник, а оптическая линза на глубоком темном фоне (#050711) с тончайшим светящимся бликом по верхнему ребру (specular border) и динамическим насыщением цвета подложки.",
+                examples: [
+                    { name: "Apple visionOS & iOS", role: "Эталон адаптивного жидкого стекла, реагирующего на освещение и фон" },
+                    { name: "Raycast AI & Arc", role: "Полупрозрачные командные палитры с тонкими градиентными обводками" },
+                    { name: "Reflect Notes & Linear Dark", role: "Космический Dark UI с деликатным свечением фиолетово-голубых орбов" },
+                    { name: "Spline & WebGL Showcases", role: "Стеклянные HUD-панели поверх интерактивных трехмерных сцен" }
+                ],
+                markers: [
+                    { label: "Типографика", value: "Кристально белые заголовки (#F8FAFC) с полупрозрачными вторичными подписями (rgba(255,255,255,0.65))." },
+                    { label: "Палитра", value: "Глубокий обсидиановый фон (#050711) + неоновые сферические градиенты (Cyan, Violet, Magenta)." },
+                    { label: "Пространство", value: "Многослойность по оси Z: фоновые источники света → матовая линза → четкий UI-контент." },
+                    { label: "Тени и границы", value: "backdrop-filter: blur(24px) saturate(180%) и внутренний блик inset 0 1px 1px rgba(255,255,255,0.35)." }
+                ],
+                palette: ["#050711", "#38BDF8", "#A855F7", "#EC4899", "#F8FAFC"],
+                playgroundTitle: "Лаборатория Liquid Glass: Интерактивная оптическая сцена",
+                playgroundHint: "Перетаскивайте светящиеся сферы мышкой прямо под стеклянной карточкой и настраивайте оптику линзы ползунками в реальном времени!",
+                whenToUse: [
+                    { title: "AI-интерфейсы, Web3, финтех нового поколения и медиа-плееры", desc: "Создает моментальное ощущение футуристичности, премиальности и высокой технологической культуры продукта." },
+                    { title: "Плавающие навбары, модальные окна, HUD-виджеты и палитры команд", desc: "Стекло идеально работает, когда под ним движется контент — пользователь не теряет контекст страницы." },
+                    { title: "Презентации аппаратных продуктов и Dark-First приложения", desc: "Глубокий темный фон экономит заряд OLED-экранов и делает акцентные кнопки невероятно выразительными." }
+                ],
+                whenNotToUse: [
+                    { title: "Сайты для бюджетных смартфонов и слабых офисных ПК", desc: "Обилие слоев с backdrop-filter: blur() вызывает просадки FPS при скролле и перегружает GPU мобильных устройств." },
+                    { title: "Текстовые статьи и документация на пестром фоне", desc: "Если под полупрозрачной карточкой проплывают яркие пятна, контраст текста падает и чтение превращается в пытку." },
+                    { title: "Светлые корпоративные порталы без фоновой графики", desc: "Матовое стекло на пустом белом или сером фоне выглядит просто как грязно-серая плашка — ему нужны цветные объекты позади." }
+                ],
+                cssCaption: "Рецепт оптического жидкого стекла 2026 года с внутренним бликом верхней грани:",
+                cssFilename: "liquid-glass-2026.css",
+                cssCode: `.liquid-glass-panel {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    0 24px 48px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.08);
+}`
+            },
+
+            skeuo: {
+                index: "СТИЛЬ #04 // ИНЖЕНЕРНАЯ ТАКТИЛЬНОСТЬ",
+                trend: "Пик популярности: 84/100 (Ренессанс аппаратного дизайна)",
+                fontName: "Space Grotesk + JetBrains Mono",
+                title: "Tactile Skeuomorphism (Тактильный скевоморфизм)",
+                manifesto: "«Цифровой интерфейс, который хочется нажать пальцем: анодированный металл, теплый пластик и светодиодные индикаторы».",
+                description: "Забудьте про глянцевую кожу и зеленое сукно из 2010-х. Современный тактильный скевоморфизм 2026 года вдохновлен промышленным дизайном Дитера Рамса (Braun) и синтезаторами Teenage Engineering. Он использует спокойный теплый оттенок года Pantone Cloud Dancer (#F0EEE9) или темный титан, микро-фаски, реалистичные тумблеры, колеса-энкодеры и физически продавливаемые клавиши.",
+                examples: [
+                    { name: "Teenage Engineering", role: "Культовый промышленный минимализм с оранжевыми акцентами и тактильными ручками" },
+                    { name: "Nothing OS & Audio Apps", role: "Точечные матричные индикаторы, тумблеры и честная инженерия" },
+                    { name: "Klack & Alcove (macOS/Web)", role: "Микро-утилиты, дарящие физическое удовольствие от каждого клика" },
+                    { name: "Framer Hardware Showcases", role: "3D-кнопки и переключатели с реалистичным светом и откликом" }
+                ],
+                markers: [
+                    { label: "Типографика", value: "Технический гротеск для подписей клавиш + моноширинные индексы (01, Hz, dB, ON/OFF)." },
+                    { label: "Палитра", value: "Матовый корпус Cloud Dancer (#F0EEE9) или титан (#1E2026) + сигнальный оранжевый (#EA580C) и зеленый LED." },
+                    { label: "Пространство", value: "Приборная панель (control deck) с четкими зазорами между клавишами и перфорацией динамиков." },
+                    { label: "Тени и границы", value: "Двойные направленные тени (верхний свет + нижняя тень), переходящие в inset при нажатии." }
+                ],
+                palette: ["#F0EEE9", "#1E2026", "#EA580C", "#10B981", "#94A3B8"],
+                playgroundTitle: "Лаборатория Tactile Skeuomorphism: Аппаратный пульт управления",
+                playgroundHint: "Щелкайте тумблерами со светодиодами, нажимайте на тактильные клавиши-пэды (включите звук клика!) и вращайте колесо-регулятор.",
+                whenToUse: [
+                    { title: "Аудио/видео софт, AI-генераторы музыки, эквалайзеры и камера-приложения", desc: "Пользователи интуитивно понимают ручки громкости, пэды и тумблеры без чтения инструкций." },
+                    { title: "Премиальные промо-сайты гаджетов, часов, электромобилей и IoT", desc: "Передает ощущение высокой культуры сборки физического устройства прямо через браузер." },
+                    { title: "Акцентные CTA-кнопки и переключатели тарифов на лендингах", desc: "Даже одна объемная тактильная кнопка на минималистичном сайте притягивает взгляд как магнит." }
+                ],
+                whenNotToUse: [
+                    { title: "Контентные сайты, блоги, новостные порталы и маркетплейсы", desc: "Превращать карточки товаров или статьи в выпуклые пластиковые кнопки — верный путь к визуальному шуму." },
+                    { title: "Формы с 20+ полями ввода и сложной вложенностью", desc: "Сложные двойные тени вокруг каждого инпута перегружают макет и уменьшают полезную площадь на мобильных экранах." },
+                    { title: "Команды без единой дизайн-системы освещения", desc: "Если на одной кнопке свет падает сверху слева, а на соседней — справа, иллюзия физического объекта мгновенно ломается." }
+                ],
+                cssCaption: "Секрет физически продавливаемой тактильной клавиши с верхним бликом и внутренним вдавливанием:",
+                cssFilename: "tactile-keycap-2026.css",
+                cssCode: `.tactile-key {
+  background: linear-gradient(145deg, #F7F5F0, #DFDCD4);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 
+    6px 6px 12px #C5C2BA,
+    -6px -6px 12px #FFFFFF,
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  transition: all 0.1s ease;
+}
+
+.tactile-key:active {
+  background: #E2DFD7;
+  box-shadow: 
+    inset 5px 5px 10px #C3C0B8,
+    inset -5px -5px 10px #FFFFFF;
+  transform: translateY(2px);
+}`
+            },
+
+            kinetic: {
+                index: "СТИЛЬ #05 // ЭКСПРЕССИЯ И КРАФТ",
+                trend: "Пик популярности: 91/100 (Главный тренд креативных студий и Awwwards)",
+                fontName: "Syne + Playfair Display",
+                title: "Kinetic & Craft (Кинетическая типографика)",
+                manifesto: "«Буквы вместо стоковых фото: живая типографика, реагирующая на курсор, и теплая рукотворность поверх сетки».",
+                description: "В 2026 году из-за перенасыщения интернета сгенерированными ИИ картинками случился мощный разворот к типографике и «человеческому следу» (Human Craft). Гигантские вариативные заголовки сами становятся главным визуальным героем: они растягиваются, наклоняются за курсором и сочетаются с изящной антиквой (Playfair Display) и живыми рукописными SVG-подчеркиваниями карандашом или маркером.",
+                examples: [
+                    { name: "Readymag & Awwwards Winners", role: "Экспериментальная сломанная сетка и типографика, реагирующая на скролл и курсор" },
+                    { name: "Dropbox Brand & Wise", role: "Смелые экспрессивные шрифты в сочетании с крафтовыми зарисовками" },
+                    { name: "Basecamp / Hey & Notion", role: "Рисованные от руки обводки, стрелки и маркерные выделения важных смыслов" },
+                    { name: "COLLINS & Pentagram Web", role: "Журнальная верстка на стыке высокой моды, искусства и интерактивного кода" }
+                ],
+                markers: [
+                    { label: "Типографика", value: "Контрастный дуэт широкого акцидентного гротеска (Syne) и курсивной антиквы (Playfair Display)." },
+                    { label: "Палитра", value: "Теплый оттенок архивной бумаги (#FBF9F5), угольные чернила (#141413) и киноварь (#D9381E)." },
+                    { label: "Пространство", value: "Асимметричная «сломанная» журнальная сетка, смелые наложения и много воздуха." },
+                    { label: "Тени и границы", value: "Тонкие 1px editorial-линии, рукописные SVG-штрихи и полное отсутствие пластиковых градиентов." }
+                ],
+                palette: ["#FBF9F5", "#F4EFE6", "#141413", "#D9381E", "#FACC15"],
+                playgroundTitle: "Лаборатория Kinetic & Craft: Живой типографический холст",
+                playgroundHint: "Водите курсором мыши прямо по гигантским буквам заголовка, переключайте физику реакции текста и включайте «Ручные акценты»!",
+                whenToUse: [
+                    { title: "Креативные агентства, дизайн-студии, архитектура и культурные институции", desc: "Демонстрирует безупречный вкус, авторский почерк и отказ от шаблонных решений." },
+                    { title: "Персональные бренды, лонгриды, манифесты и имиджевые запуски", desc: "Рукописные пометки и живая типографика создают интимный диалог с читателем и побеждают «баннерную слепоту»." },
+                    { title: "Проекты без собственных фотосессий", desc: "Выразительная типографика полностью заменяет необходимость покупать банальные стоковые фотографии." }
+                ],
+                whenNotToUse: [
+                    { title: "Утилитарные сервисы быстрой покупки (доставка еды, заказ такси, билеты)", desc: "Когда человек спешит заказать такси под дождем, ему нужна понятная кнопка, а не разлетающиеся от курсора буквы." },
+                    { title: "Интерфейсы с частым повторным использованием (ежедневные CRM)", desc: "Слишком активная анимация текста, которая восхищает в первый визит, на десятый день работы начинает утомлять." },
+                    { title: "Сайты без учета prefers-reduced-motion", desc: "Для пользователей с вестибулярной чувствительностью важно предусмотреть спокойный режим без резких искажений текста." }
+                ],
+                cssCaption: "Сочетание журнальной типографики и анимированного SVG-подчеркивания от руки:",
+                cssFilename: "kinetic-craft-2026.css",
+                cssCode: `.editorial-headline {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.8rem, 7vw, 6.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+}
+
+.editorial-serif-accent {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.hand-drawn-svg path {
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  animation: drawStroke 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}`
+            },
+
+            retro: {
+                index: "СТИЛЬ #06 // ИНЖЕНЕРНЫЙ АНДЕГРАУНД",
+                trend: "Пик популярности: 87/100 (Культ среди AI-разработчиков и DevTools)",
+                fontName: "JetBrains Mono (Monospace)",
+                title: "Retro-Digital / Terminal (ASCII & CRT)",
+                manifesto: "«Эстетика чистого сигнала: моноширинные шрифты, свечение люминофора, ASCII-графика и нулевая шелуха».",
+                description: "С бумом консольных AI-агентов (Claude Code, Warp, Cursor) и кибербезопасности в 2026 году расцвел стиль Retro-Digital / Terminal. Он объединяет ностальгию по ЭЛТ-мониторам 80-х и раннему вебу с ультрасовременной скоростью. Здесь нет скруглений (border-radius: 0px), все выстроено по строгой символьной сетке, а иллюстрации заменяются интерактивными ASCII-матрицами и пиксельными шейдерами.",
+                examples: [
+                    { name: "Warp & Cursor / AI CLI Tools", role: "Эстетика умного терминала, моноширинные таблицы и мгновенный отклик" },
+                    { name: "Vercel Ship & Evil Rabbit", role: "Точечные матрицы, ASCII-арт в заголовках и строгая черно-зеленая/янтарная гамма" },
+                    { name: "Flipper Zero & Defcon", role: "Пиксельная кибер-графика, глитч-переходы и хакерский шарм" },
+                    { name: "Poolsuite FM & Panic", role: "Творческое переосмысление ретро-ОС с современным UX" }
+                ],
+                markers: [
+                    { label: "Типографика", value: "Тотальное доминирование моноширинных шрифтов (JetBrains Mono), символьные рамки [+---+] и курсоры █." },
+                    { label: "Палитра", value: "Черный экран монитора (#070B08) + зеленый люминофор (#00FF66), янтарный (#FFB000) или циан (#00F0FF)." },
+                    { label: "Пространство", value: "Острые углы 0px, табличная сетка с видимыми разделителями 1px solid и статус-бары." },
+                    { label: "Тени и границы", value: "Неоновое свечение text-shadow / box-shadow и опциональный фильтр CRT-сканлайнов." }
+                ],
+                palette: ["#070B08", "#00FF66", "#FFB000", "#00F0FF", "#FF0055"],
+                playgroundTitle: "Лаборатория Retro-Digital: Терминал, ASCII-холст и CRT-монитор",
+                playgroundHint: "Рисуйте курсором мыши на пиксельной ASCII-матрице, переключайте цвет люминофора, включайте CRT-сканлайны и запускайте команды в терминале!",
+                whenToUse: [
+                    { title: "DevTools, AI-агенты, кибербезопасность, крипто-протоколы и API-сервисы", desc: "Разработчики и инженеры считывают этот визуальный язык как «свой» — он вызывает мгновенное уважение гик-аудитории." },
+                    { title: "Игровые инди-студии, научно-фантастические проекты и хакатоны", desc: "Создает густую киберпанк-атмосферу и превращает обычный просмотр сайта в исследование секретной системы." },
+                    { title: "Ультра-быстрые и экологичные (Low-Carbon) сайты", desc: "ASCII-графика и CSS-сетки весят считанные килобайты и загружаются мгновенно даже при слабом интернете." }
+                ],
+                whenNotToUse: [
+                    { title: "Массовый e-commerce (одежда, косметика, мебель, детские товары)", desc: "Покупателю важно видеть реалистичный цвет ткани или текстуру дивана, а не зеленую матрицу на черном фоне." },
+                    { title: "Продукты для старшей аудитории, далекой от IT", desc: "Интерфейс командной строки может показаться пугающим или «сломавшимся» для неподготовленного пользователя." },
+                    { title: "Длительное чтение при ярком солнечном свете", desc: "Высококонтрастный зеленый текст на черном фоне с эффектом свечения может вызывать эффект ореола (halation) у людей с астигматизмом." }
+                ],
+                cssCaption: "Эффект ЭЛТ-монитора (CRT Scanlines) и свечения люминофора на чистом CSS:",
+                cssFilename: "retro-terminal-crt.css",
+                cssCode: `.retro-terminal {
+  background-color: #070B08;
+  color: #00FF66;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid #00FF66;
+  text-shadow: 0 0 8px rgba(0, 255, 102, 0.45);
+  box-shadow: 0 0 24px rgba(0, 255, 102, 0.15),
+              inset 0 0 18px rgba(0, 255, 102, 0.08);
+}
+
+.crt-scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.4) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+}`
+            }
+        };
+
+        /* ==========================================
+           CORE SWITCHER & RENDER LOGIC
+           ========================================== */
+        function switchStyle(styleKey) {
+            if (!STYLES_DATA[styleKey]) return;
+            currentStyleKey = styleKey;
+            const data = STYLES_DATA[styleKey];
+
+            // 1. Update body theme class
+            document.body.className = `theme-${styleKey} min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white`;
+
+            // 2. Update active state of top navigation tabs
+            STYLE_ORDER.forEach((key, idx) => {
+                const btn = document.getElementById(`tab-${key}`);
+                if (!btn) return;
+                if (key === styleKey) {
+                    btn.style.background = 'var(--accent)';
+                    btn.style.color = (styleKey === 'retro' || styleKey === 'brutalism') ? '#000000' : '#FFFFFF';
+                    btn.style.borderRadius = 'var(--radius-sm)';
+                    btn.style.border = 'var(--border-width) solid var(--border-color)';
+                    btn.style.fontWeight = '700';
+                    document.getElementById('mobileActiveStyleLabel').textContent = `${idx + 1}/6 ${ key.toUpperCase() }`;
+                } else {
+                    btn.style.background = 'var(--bg-tertiary)';
+                    btn.style.color = 'var(--text-secondary)';
+                    btn.style.borderRadius = 'var(--radius-sm)';
+                    btn.style.border = '1px solid var(--border-color)';
+                    btn.style.fontWeight = '500';
+                }
+            });
+
+            // Brand badge text color fix for retro/brutalism
+            const brandBadge = document.getElementById('brandBadge');
+            brandBadge.style.color = (styleKey === 'retro' || styleKey === 'brutalism') ? '#000000' : '#FFFFFF';
+
+            // 3. Populate Hero Section
+            const indexBadge = document.getElementById('styleIndexBadge');
+            indexBadge.textContent = data.index;
+            indexBadge.style.color = (styleKey === 'retro' || styleKey === 'brutalism') ? '#000000' : '#FFFFFF';
+
+            document.getElementById('styleTrendText').textContent = data.trend;
+            document.getElementById('styleFontBadge').textContent = `Шрифт: ${data.fontName}`;
+            document.getElementById('styleTitle').textContent = data.title;
+            document.getElementById('styleManifesto').textContent = data.manifesto;
+            document.getElementById('styleDescription').textContent = data.description;
+
+            // Examples
+            const examplesContainer = document.getElementById('styleExamplesContainer');
+            examplesContainer.innerHTML = data.examples.map(ex => `
+                <div class="style-subcard px-3.5 py-2 text-xs flex flex-col gap-0.5">
+                    <span class="font-bold" style="color: var(--text-primary);">${ex.name}</span>
+                    <span style="color: var(--text-secondary);">${ex.role}</span>
+                </div>
+            `).join('');
+
+            // Visual Markers
+            const markersList = document.getElementById('visualMarkersList');
+            markersList.innerHTML = data.markers.map(m => `
+                <div class="style-subcard p-3">
+                    <div class="text-xs font-mono-code font-bold uppercase mb-1" style="color: var(--accent);">${m.label}</div>
+                    <div class="text-xs sm:text-sm leading-snug" style="color: var(--text-primary);">${m.value}</div>
+                </div>
+            `).join('');
+
+            // Palette Swatches
+            const swatchesContainer = document.getElementById('paletteSwatches');
+            swatchesContainer.innerHTML = data.palette.map(hex => `
+                <button onclick="copyTextToClipboard('${hex}', 'Цвет ${hex} скопирован!')"
+                        title="Кликните, чтобы скопировать ${hex}"
+                        class="group flex flex-col items-center gap-1.5 focus:outline-none">
+                    <div class="w-full h-10 transition-transform group-hover:scale-105"
+                         style="background-color: ${hex}; border-radius: var(--radius-sm); border: 2px solid var(--border-color);"></div>
+                    <span class="text-[11px] font-mono-code" style="color: var(--text-secondary);">${hex}</span>
+                </button>
+            `).join('');
+
+            // 4. Populate Playground
+            document.getElementById('playgroundTitle').textContent = data.playgroundTitle;
+            document.getElementById('playgroundHint').textContent = data.playgroundHint;
+            renderPlayground(styleKey);
+
+            // 5. Populate When To Use / When Not To Use
+            document.getElementById('whenToUseList').innerHTML = data.whenToUse.map(item => `
+                <li class="style-subcard p-4">
+                    <div class="font-bold mb-1 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                        <span>${item.title}</span>
+                    </div>
+                    <p class="text-xs sm:text-sm leading-relaxed" style="color: var(--text-secondary);">${item.desc}</p>
+                </li>
+            `).join('');
+
+            document.getElementById('whenNotToUseList').innerHTML = data.whenNotToUse.map(item => `
+                <li class="style-subcard p-4">
+                    <div class="font-bold mb-1 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                        <span>${item.title}</span>
+                    </div>
+                    <p class="text-xs sm:text-sm leading-relaxed" style="color: var(--text-secondary);">${item.desc}</p>
+                </li>
+            `).join('');
+
+            // 6. Populate CSS Snippet
+            document.getElementById('cssSecretCaption').textContent = data.cssCaption;
+            document.getElementById('cssFilename').textContent = data.cssFilename;
+            document.getElementById('cssCodeBlock').textContent = data.cssCode;
+
+            // Re-init Lucide icons
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        }
+
+        function navigateRelativeStyle(direction) {
+            const idx = STYLE_ORDER.indexOf(currentStyleKey);
+            const nextIdx = (idx + direction + STYLE_ORDER.length) % STYLE_ORDER.length;
+            switchStyle(STYLE_ORDER[nextIdx]);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ==========================================
+           INTERACTIVE PLAYGROUND RENDERERS (6 LABS)
+           ========================================== */
+        let bentoTimerInterval = null;
+        let bentoSeconds = 1500; // 25:00
+
+        function renderPlayground(styleKey) {
+            // Clear any running intervals from previous playgrounds
+            if (bentoTimerInterval) {
+                clearInterval(bentoTimerInterval);
+                bentoTimerInterval = null;
+            }
+
+            const mount = document.getElementById('playgroundMount');
+
+            if (styleKey === 'bento') {
+                renderBentoPlayground(mount);
+            } else if (styleKey === 'brutalism') {
+                renderBrutalismPlayground(mount);
+            } else if (styleKey === 'glass') {
+                renderGlassPlayground(mount);
+            } else if (styleKey === 'skeuo') {
+                renderSkeuoPlayground(mount);
+            } else if (styleKey === 'kinetic') {
+                renderKineticPlayground(mount);
+            } else if (styleKey === 'retro') {
+                renderRetroPlayground(mount);
+            }
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        /* ------------------------------------------
+           LAB 1: BENTO UI PLAYGROUND
+           ------------------------------------------ */
+        let bentoState = {
+            accent: '#4F46E5',
+            billingYearly: true,
+            aiAddon: true,
+            chartDataset: 'traffic',
+            cardExpanded: false,
+            timerRunning: false
+        };
+
+        function renderBentoPlayground(mount) {
+            const accents = [
+                { name: 'Indigo', color: '#4F46E5' },
+                { name: 'Emerald', color: '#10B981' },
+                { name: 'Rose', color: '#F43F5E' },
+                { name: 'Amber', color: '#F59E0B' },
+                { name: 'Violet', color: '#8B5CF6' }
+            ];
+
+            mount.innerHTML = `
+                <!-- Top Controls Bar -->
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6 p-4 rounded-2xl bg-slate-100 border border-slate-200/80 text-slate-800">
+                    <div class="flex items-center gap-2 text-xs sm:text-sm font-semibold">
+                        <i data-lucide="palette" class="w-4 h-4 text-indigo-600"></i>
+                        <span>Акцент бенто-ячеек:</span>
+                        <div class="flex items-center gap-1.5 ml-2">
+                            ${accents.map(a => `
+                                <button onclick="updateBentoAccent('${a.color}')"
+                                        class="w-6 h-6 rounded-full transition-transform hover:scale-110 border-2 ${bentoState.accent === a.color ? 'border-slate-900 scale-110' : 'border-white'}"
+                                        style="background-color: ${a.color};" title="${a.name}"></button>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="text-xs font-mono-code text-slate-500">
+                        Все 4 виджета ниже полностью интерактивны
+                    </div>
+                </div>
+
+                <!-- Modular Bento Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <!-- Widget 1: Live Pricing / Feature Toggle (Span 2) -->
+                    <div class="md:col-span-2 p-6 rounded-[26px] bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between text-slate-900">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-mono-code uppercase px-2.5 py-1 rounded-full font-semibold"
+                                      id="bentoBadge1" style="background: ${bentoState.accent}18; color: ${bentoState.accent};">
+                                    ВИДЖЕТ 01 // ЖИВОЙ ТАРИФ
+                                </span>
+                                <!-- Billing Switcher -->
+                                <button onclick="toggleBentoBilling()" class="flex items-center gap-2 text-xs font-semibold bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200 hover:bg-slate-200/70 transition">
+                                    <span id="billingLabel">${bentoState.billingYearly ? 'Годовой (-20%)' : 'Помесячно'}</span>
+                                    <span class="w-2.5 h-2.5 rounded-full" id="billingDot" style="background: ${bentoState.accent};"></span>
+                                </button>
+                            </div>
+                            <div class="flex items-baseline gap-2 mb-2">
+                                <span id="bentoPriceValue" class="text-4xl sm:text-5xl font-extrabold tracking-tight">$39</span>
+                                <span class="text-xs text-slate-500">/ месяц за команду</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mb-5">Переключайте опции ниже и наблюдайте мгновенный пересчет метрики:</p>
+                        </div>
+
+                        <div class="space-y-2.5 pt-3 border-t border-slate-100">
+                            <label class="flex items-center justify-between text-xs sm:text-sm cursor-pointer p-2 rounded-xl hover:bg-slate-50">
+                                <span class="font-medium">⚡ AI-Автопилот генерации (+$10)</span>
+                                <input type="checkbox" ${bentoState.aiAddon ? 'checked' : ''} onchange="toggleBentoAddon()" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer">
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Widget 2: Interactive Mini Chart (Span 2) -->
+                    <div class="md:col-span-2 p-6 rounded-[26px] bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between text-slate-900">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                            <div>
+                                <span class="text-xs font-mono-code text-slate-400">ВИДЖЕТ 02 // ТЕЛЕМЕТРИЯ</span>
+                                <h4 id="bentoChartMetric" class="text-lg font-bold">+142.8% Конверсия</h4>
+                            </div>
+                            <div class="flex gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+                                <button onclick="setBentoChart('traffic')" id="chartBtn-traffic" class="px-2.5 py-1 rounded-lg bg-white shadow-sm">Трафик</button>
+                                <button onclick="setBentoChart('conv')" id="chartBtn-conv" class="px-2.5 py-1 rounded-lg text-slate-500">Конверсия</button>
+                                <button onclick="setBentoChart('ai')" id="chartBtn-ai" class="px-2.5 py-1 rounded-lg text-slate-500">AI-токены</button>
+                            </div>
+                        </div>
+
+                        <!-- Bar Chart Bars -->
+                        <div id="bentoChartBars" class="grid grid-cols-7 gap-2 items-end h-28 pt-4 px-1">
+                            <!-- Rendered by updateBentoChartUI() -->
+                        </div>
+                        <div class="flex justify-between text-[11px] font-mono-code text-slate-400 mt-2 px-1">
+                            <span>ПН</span><span>ВТ</span><span>СР</span><span>ЧТ</span><span>ПТ</span><span>СБ</span><span>ВС</span>
+                        </div>
+                    </div>
+
+                    <!-- Widget 3: Resizable Bento Cell (1x1 <-> 2x1 on click) -->
+                    <div id="bentoResizableCard" onclick="toggleBentoCardSize()"
+                         class="${bentoState.cardExpanded ? 'md:col-span-2' : 'md:col-span-1'} p-6 rounded-[26px] text-white cursor-pointer transition-all duration-300 flex flex-col justify-between select-none hover:scale-[1.01]"
+                         style="background: ${bentoState.accent};">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-mono-code uppercase bg-white/20 px-2.5 py-1 rounded-full">
+                                ${bentoState.cardExpanded ? 'РАЗМЕР: 2x1 (ШИРОКИЙ)' : 'РАЗМЕР: 1x1 (КЛИКНИ!)'}
+                            </span>
+                            <i data-lucide="${bentoState.cardExpanded ? 'minimize-2' : 'maximize-2'}" class="w-4 h-4"></i>
+                        </div>
+                        <div class="my-4">
+                            <div class="text-xl font-bold mb-1">Адаптивная ячейка</div>
+                            <p class="text-xs text-white/85 leading-relaxed">
+                                Кликните по этой карточке, чтобы переключить её вес в сетке между <strong>1x1</strong> и <strong>2x1</strong>.
+                            </p>
+                        </div>
+                        <div class="text-[11px] font-mono-code text-white/75">grid-column: span ${bentoState.cardExpanded ? '2' : '1'}</div>
+                    </div>
+
+                    <!-- Widget 4: Interactive Focus Timer / Synth Player -->
+                    <div class="${bentoState.cardExpanded ? 'md:col-span-2' : 'md:col-span-3'} p-6 rounded-[26px] bg-slate-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-300">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span class="text-xs font-mono-code text-slate-400">ВИДЖЕТ 04 // DEEP WORK POMODORO</span>
+                            </div>
+                            <div id="bentoTimerDisplay" class="text-3xl sm:text-4xl font-mono-code font-bold tracking-wider">25:00</div>
+                            <p class="text-xs text-slate-400 mt-1">Микро-утилита прямо внутри презентационной плитки</p>
+                        </div>
+                        <div class="flex items-center gap-2.5">
+                            <button onclick="toggleBentoTimer()" id="bentoTimerBtn"
+                                    class="px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-2 transition"
+                                    style="background: ${bentoState.accent}; color: #fff;">
+                                <i data-lucide="play" class="w-4 h-4"></i>
+                                <span>Старт</span>
+                            </button>
+                            <button onclick="resetBentoTimer()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-mono-code">
+                                Сброс
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            updateBentoPricingUI();
+            updateBentoChartUI();
+            updateBentoTimerUI();
+        }
+
+        function updateBentoAccent(color) {
+            bentoState.accent = color;
+            renderBentoPlayground(document.getElementById('playgroundMount'));
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function toggleBentoBilling() {
+            bentoState.billingYearly = !bentoState.billingYearly;
+            updateBentoPricingUI();
+        }
+
+        function toggleBentoAddon() {
+            bentoState.aiAddon = !bentoState.aiAddon;
+            updateBentoPricingUI();
+        }
+
+        function updateBentoPricingUI() {
+            let base = bentoState.billingYearly ? 29 : 39;
+            if (bentoState.aiAddon) base += 10;
+            const priceEl = document.getElementById('bentoPriceValue');
+            const labelEl = document.getElementById('billingLabel');
+            if (priceEl) priceEl.textContent = `$${base}`;
+            if (labelEl) labelEl.textContent = bentoState.billingYearly ? 'Годовой (-20%)' : 'Помесячно';
+        }
+
+        function setBentoChart(dataset) {
+            bentoState.chartDataset = dataset;
+            updateBentoChartUI();
+        }
+
+        function updateBentoChartUI() {
+            const datasets = {
+                traffic: { label: '+184.2% Охват блоков', values: [42, 65, 58, 84, 72, 95, 100] },
+                conv: { label: '+38.6% Конверсия в клик', values: [30, 48, 70, 62, 88, 79, 94] },
+                ai: { label: '1.4M Токенов в секунду', values: [55, 40, 82, 90, 68, 85, 98] }
+            };
+            const current = datasets[bentoState.chartDataset];
+            const metricEl = document.getElementById('bentoChartMetric');
+            const barsEl = document.getElementById('bentoChartBars');
+            if (!barsEl) return;
+
+            metricEl.textContent = current.label;
+            ['traffic', 'conv', 'ai'].forEach(k => {
+                const btn = document.getElementById(`chartBtn-${k}`);
+                if (!btn) return;
+                btn.className = k === bentoState.chartDataset
+                    ? 'px-2.5 py-1 rounded-lg bg-white shadow-sm text-slate-900'
+                    : 'px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-800';
+            });
+
+            barsEl.innerHTML = current.values.map(v => `
+                <div class="group relative flex flex-col items-center justify-end h-full">
+                    <div class="w-full rounded-t-lg transition-all duration-500 cursor-pointer hover:opacity-85"
+                         style="height: ${v}%; background: ${bentoState.accent};"></div>
+                    <span class="opacity-0 group-hover:opacity-100 absolute -top-6 text-[10px] font-mono-code bg-slate-900 text-white px-1.5 py-0.5 rounded transition">${v}%</span>
+                </div>
+            `).join('');
+        }
+
+        function toggleBentoCardSize() {
+            bentoState.cardExpanded = !bentoState.cardExpanded;
+            renderBentoPlayground(document.getElementById('playgroundMount'));
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function toggleBentoTimer() {
+            bentoState.timerRunning = !bentoState.timerRunning;
+            if (bentoState.timerRunning) {
+                bentoTimerInterval = setInterval(() => {
+                    bentoSeconds = Math.max(0, bentoSeconds - 1);
+                    updateBentoTimerUI();
+                }, 1000);
+            } else if (bentoTimerInterval) {
+                clearInterval(bentoTimerInterval);
+                bentoTimerInterval = null;
+            }
+            updateBentoTimerUI();
+        }
+
+        function resetBentoTimer() {
+            bentoState.timerRunning = false;
+            if (bentoTimerInterval) {
+                clearInterval(bentoTimerInterval);
+                bentoTimerInterval = null;
+            }
+            bentoSeconds = 1500;
+            updateBentoTimerUI();
+        }
+
+        function updateBentoTimerUI() {
+            const disp = document.getElementById('bentoTimerDisplay');
+            const btn = document.getElementById('bentoTimerBtn');
+            if (!disp || !btn) return;
+            const mins = String(Math.floor(bentoSeconds / 60)).padStart(2, '0');
+            const secs = String(bentoSeconds % 60).padStart(2, '0');
+            disp.textContent = `${mins}:${secs}`;
+            btn.innerHTML = bentoState.timerRunning
+                ? `<span>Пауза</span>`
+                : `<span>Старт</span>`;
+        }
+
+        /* ------------------------------------------
+           LAB 2: NEO-BRUTALISM PLAYGROUND
+           ------------------------------------------ */
+        let brutalState = {
+            borderWidth: 3,
+            shadowX: 8,
+            shadowY: 8,
+            bgColor: '#FFDE00',
+            clicks: 42,
+            marqueeReverse: false,
+            stickers: [
+                { text: 'RAW HTML!', x: 72, y: 18, bg: '#00F5D4', rot: -8 },
+                { text: 'NO BLUR 2026', x: 64, y: 68, bg: '#FF5277', rot: 6 }
+            ]
+        };
+
+        function renderBrutalismPlayground(mount) {
+            const acidColors = [
+                { name: 'Acid Yellow', hex: '#FFDE00' },
+                { name: 'Hot Pink', hex: '#FF5277' },
+                { name: 'Cyber Mint', hex: '#00F5D4' },
+                { name: 'Electric Lilac', hex: '#C4A1FF' },
+                { name: 'Safety Orange', hex: '#FF7A00' }
+            ];
+
+            mount.innerHTML = `
+                <!-- Live Marquee Strip -->
+                <div class="overflow-hidden border-2 border-black bg-black text-[#FFDE00] py-2 mb-6 select-none cursor-pointer"
+                     onclick="toggleBrutalMarquee()" title="Кликните, чтобы сменить направление бегущей строки">
+                    <div id="brutalMarqueeTrack" class="marquee-track font-mono-code font-bold text-xs sm:text-sm tracking-widest uppercase">
+                        <span class="mx-4">★ NEO-BRUTALISM 2026</span>
+                        <span class="mx-4">★ ЖЕСТКИЕ ТЕНИ БЕЗ РАЗМЫТИЯ</span>
+                        <span class="mx-4">★ ЧЕСТНЫЕ КОНТУРЫ 3PX SOLID #000</span>
+                        <span class="mx-4">★ КЛИКНИ ПО СТРОКЕ ДЛЯ РЕВЕРСА</span>
+                        <span class="mx-4">★ NEO-BRUTALISM 2026</span>
+                        <span class="mx-4">★ ЖЕСТКИЕ ТЕНИ БЕЗ РАЗМЫТИЯ</span>
+                        <span class="mx-4">★ ЧЕСТНЫЕ КОНТУРЫ 3PX SOLID #000</span>
+                        <span class="mx-4">★ КЛИКНИ ПО СТРОКЕ ДЛЯ РЕВЕРСА</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    <!-- Left 5 cols: Sliders & Acid Color Controls -->
+                    <div class="lg:col-span-5 p-5 bg-white border-2 border-black shadow-[5px_5px_0px_#000] space-y-5 text-black">
+                        <div class="font-bold text-base uppercase border-b-2 border-black pb-2 flex items-center justify-between">
+                            <span>Конструктор брутализма</span>
+                            <span class="text-xs font-mono-code bg-black text-white px-2 py-0.5">LIVE CSS</span>
+                        </div>
+
+                        <!-- Border Width Slider -->
+                        <div>
+                            <div class="flex justify-between text-xs font-mono-code font-bold mb-1">
+                                <span>Толщина черной обводки:</span>
+                                <span id="brutalBorderVal">${brutalState.borderWidth}px</span>
+                            </div>
+                            <input type="range" min="1" max="8" value="${brutalState.borderWidth}"
+                                   oninput="updateBrutalParams('border', this.value)"
+                                   class="w-full accent-black cursor-pointer">
+                        </div>
+
+                        <!-- Shadow X Offset -->
+                        <div>
+                            <div class="flex justify-between text-xs font-mono-code font-bold mb-1">
+                                <span>Смещение жесткой тени X:</span>
+                                <span id="brutalShadowXVal">${brutalState.shadowX}px</span>
+                            </div>
+                            <input type="range" min="0" max="20" value="${brutalState.shadowX}"
+                                   oninput="updateBrutalParams('shadowX', this.value)"
+                                   class="w-full accent-black cursor-pointer">
+                        </div>
+
+                        <!-- Shadow Y Offset -->
+                        <div>
+                            <div class="flex justify-between text-xs font-mono-code font-bold mb-1">
+                                <span>Смещение жесткой тени Y:</span>
+                                <span id="brutalShadowYVal">${brutalState.shadowY}px</span>
+                            </div>
+                            <input type="range" min="0" max="20" value="${brutalState.shadowY}"
+                                   oninput="updateBrutalParams('shadowY', this.value)"
+                                   class="w-full accent-black cursor-pointer">
+                        </div>
+
+                        <!-- Acid Color Switcher -->
+                        <div>
+                            <div class="text-xs font-mono-code font-bold mb-2">Дофаминовый цвет карточки:</div>
+                            <div class="flex gap-2">
+                                ${acidColors.map(c => `
+                                    <button onclick="updateBrutalParams('color', '${c.hex}')"
+                                            class="w-9 h-9 border-2 border-black transition-transform hover:-translate-y-0.5"
+                                            style="background: ${c.hex}; box-shadow: 3px 3px 0px #000;"
+                                            title="${c.name}"></button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Sticker Spawner Buttons -->
+                        <div class="pt-3 border-t-2 border-black flex flex-wrap gap-2">
+                            <button onclick="spawnBrutalSticker()"
+                                    class="flex-1 py-2.5 px-3 bg-[#00F5D4] text-black font-bold text-xs uppercase border-2 border-black shadow-[4px_4px_0px_#000] active:translate-x-1 active:translate-y-1 active:shadow-none transition">
+                                + Приклеить стикер
+                            </button>
+                            <button onclick="clearBrutalStickers()"
+                                    class="py-2.5 px-3 bg-white text-black font-bold text-xs uppercase border-2 border-black shadow-[4px_4px_0px_#000] active:translate-x-1 active:translate-y-1 active:shadow-none transition">
+                                Очистить
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right 7 cols: Live Preview Canvas with Stickers -->
+                    <div id="brutalCanvasArea" class="lg:col-span-7 relative min-h-[320px] p-6 sm:p-8 bg-[#FFFDF5] border-2 border-black flex items-center justify-center overflow-hidden"
+                         style="background-image: radial-gradient(#000 1.2px, transparent 1.2px); background-size: 20px 20px;">
+                        
+                        <!-- Target Customizable Brutalist Card -->
+                        <div id="brutalPreviewCard" class="relative z-10 max-w-md w-full p-6 text-black transition-all duration-75"
+                             style="background: ${brutalState.bgColor}; border: ${brutalState.borderWidth}px solid #000000; box-shadow: ${brutalState.shadowX}px ${brutalState.shadowY}px 0px #000000;">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-0.5 bg-black text-white text-xs font-mono-code font-bold uppercase">
+                                    DROP #2026
+                                </span>
+                                <span id="brutalCssReadout" class="text-xs font-mono-code font-bold">
+                                    shadow: ${brutalState.shadowX}px ${brutalState.shadowY}px 0 #000
+                                </span>
+                            </div>
+                            <h3 class="text-2xl sm:text-3xl font-extrabold uppercase leading-tight mb-2">
+                                Честный интерфейс без размытия
+                            </h3>
+                            <p class="text-xs sm:text-sm font-medium mb-6">
+                                Нажмите на кнопку ниже — её жесткая тень физически схлопнется в ноль при клике!
+                            </p>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <button onclick="pressBrutalButton()"
+                                        class="px-5 py-3 bg-white text-black font-extrabold text-sm uppercase border-2 border-black shadow-[5px_5px_0px_#000] hover:bg-[#FF5277] hover:text-white active:translate-x-[5px] active:translate-y-[5px] active:shadow-none transition-all">
+                                    Нажми меня! (<span id="brutalClickCounter">${brutalState.clicks}</span>)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Sticker Layer -->
+                        <div id="brutalStickersLayer" class="absolute inset-0 pointer-events-none"></div>
+                    </div>
+                </div>
+            `;
+
+            renderBrutalStickers();
+        }
+
+        function updateBrutalParams(type, val) {
+            if (type === 'border') brutalState.borderWidth = Number(val);
+            if (type === 'shadowX') brutalState.shadowX = Number(val);
+            if (type === 'shadowY') brutalState.shadowY = Number(val);
+            if (type === 'color') brutalState.bgColor = val;
+
+            const card = document.getElementById('brutalPreviewCard');
+            if (!card) return;
+            card.style.background = brutalState.bgColor;
+            card.style.borderWidth = `${brutalState.borderWidth}px`;
+            card.style.boxShadow = `${brutalState.shadowX}px ${brutalState.shadowY}px 0px #000000`;
+
+            document.getElementById('brutalBorderVal').textContent = `${brutalState.borderWidth}px`;
+            document.getElementById('brutalShadowXVal').textContent = `${brutalState.shadowX}px`;
+            document.getElementById('brutalShadowYVal').textContent = `${brutalState.shadowY}px`;
+            document.getElementById('brutalCssReadout').textContent = `shadow: ${brutalState.shadowX}px ${brutalState.shadowY}px 0 #000`;
+        }
+
+        function pressBrutalButton() {
+            brutalState.clicks++;
+            const el = document.getElementById('brutalClickCounter');
+            if (el) el.textContent = brutalState.clicks;
+        }
+
+        function toggleBrutalMarquee() {
+            brutalState.marqueeReverse = !brutalState.marqueeReverse;
+            const track = document.getElementById('brutalMarqueeTrack');
+            if (track) track.classList.toggle('reverse', brutalState.marqueeReverse);
+        }
+
+        function spawnBrutalSticker() {
+            const phrases = ['SHIP IT!', '100% RAW', 'ZERO BLUR', 'BOLD TYPE', '2026 VIBE', 'CTRL+Z', 'WOW SUCH UI', 'ACID POP'];
+            const colors = ['#FFDE00', '#FF5277', '#00F5D4', '#C4A1FF', '#FFFFFF'];
+            brutalState.stickers.push({
+                text: phrases[Math.floor(Math.random() * phrases.length)],
+                x: Math.floor(8 + Math.random() * 72),
+                y: Math.floor(8 + Math.random() * 74),
+                bg: colors[Math.floor(Math.random() * colors.length)],
+                rot: Math.floor(-18 + Math.random() * 36)
+            });
+            renderBrutalStickers();
+        }
+
+        function clearBrutalStickers() {
+            brutalState.stickers = [];
+            renderBrutalStickers();
+        }
+
+        function renderBrutalStickers() {
+            const layer = document.getElementById('brutalStickersLayer');
+            if (!layer) return;
+            layer.innerHTML = brutalState.stickers.map((s, idx) => `
+                <div onclick="removeBrutalSticker(${idx})"
+                     title="Кликните, чтобы убрать стикер"
+                     class="pointer-events-auto cursor-pointer select-none absolute z-20 px-3 py-1 text-xs font-mono-code font-extrabold text-black border-2 border-black shadow-[3px_3px_0px_#000] hover:scale-110 transition-transform"
+                     style="left: ${s.x}%; top: ${s.y}%; background: ${s.bg}; transform: rotate(${s.rot}deg);">
+                    ${s.text}
+                </div>
+            `).join('');
+        }
+
+        function removeBrutalSticker(idx) {
+            brutalState.stickers.splice(idx, 1);
+            renderBrutalStickers();
+        }
+
+        /* ------------------------------------------
+           LAB 3: LIQUID GLASS PLAYGROUND
+           ------------------------------------------ */
+        let glassState = {
+            blur: 22,
+            opacity: 0.09,
+            specular: 0.45,
+            autoOrbit: true,
+            paletteIdx: 0
+        };
+
+        const GLASS_PALETTES = [
+            ['#38BDF8', '#A855F7', '#EC4899'],
+            ['#10B981', '#06B6D4', '#3B82F6'],
+            ['#F59E0B', '#EF4444', '#EC4899']
+        ];
+
+        function renderGlassPlayground(mount) {
+            const colors = GLASS_PALETTES[glassState.paletteIdx];
+            mount.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    <!-- Left 4 cols: Optical Controls -->
+                    <div class="lg:col-span-4 p-5 rounded-2xl bg-slate-900/90 border border-white/15 text-slate-100 space-y-5 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                                <span class="font-bold text-sm">Оптические параметры</span>
+                                <span class="text-xs font-mono-code text-sky-400">visionOS 2026</span>
+                            </div>
+
+                            <!-- Blur Slider -->
+                            <div>
+                                <div class="flex justify-between text-xs font-mono-code mb-1">
+                                    <span class="text-slate-300">Преломление (blur):</span>
+                                    <span id="glassBlurVal" class="text-sky-400">${glassState.blur}px</span>
+                                </div>
+                                <input type="range" min="0" max="40" value="${glassState.blur}"
+                                       oninput="updateGlassOptics('blur', this.value)"
+                                       class="w-full accent-sky-400 cursor-pointer">
+                            </div>
+
+                            <!-- Opacity Slider -->
+                            <div>
+                                <div class="flex justify-between text-xs font-mono-code mb-1">
+                                    <span class="text-slate-300">Плотность стекла (alpha):</span>
+                                    <span id="glassOpacityVal" class="text-sky-400">${Math.round(glassState.opacity * 100)}%</span>
+                                </div>
+                                <input type="range" min="2" max="35" value="${Math.round(glassState.opacity * 100)}"
+                                       oninput="updateGlassOptics('opacity', this.value)"
+                                       class="w-full accent-sky-400 cursor-pointer">
+                            </div>
+
+                            <!-- Specular Edge Highlight -->
+                            <div>
+                                <div class="flex justify-between text-xs font-mono-code mb-1">
+                                    <span class="text-slate-300">Блик на грани (specular):</span>
+                                    <span id="glassSpecularVal" class="text-sky-400">${Math.round(glassState.specular * 100)}%</span>
+                                </div>
+                                <input type="range" min="0" max="95" value="${Math.round(glassState.specular * 100)}"
+                                       oninput="updateGlassOptics('specular', this.value)"
+                                       class="w-full accent-sky-400 cursor-pointer">
+                            </div>
+                        </div>
+
+                        <!-- Orb Controls -->
+                        <div class="space-y-2.5 pt-4 border-t border-white/10">
+                            <button onclick="toggleGlassAutoOrbit()" id="glassOrbitBtn"
+                                    class="w-full py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-semibold flex items-center justify-center gap-2 transition">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-sky-400"></i>
+                                <span>Анимация орбов: ${glassState.autoOrbit ? 'ВКЛ' : 'ПАУЗА'}</span>
+                            </button>
+                            <button onclick="cycleGlassSpectrum()"
+                                    class="w-full py-2.5 px-3 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-400/30 text-sky-300 text-xs font-semibold transition">
+                                Сменить спектр свечения орбов
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right 8 cols: Interactive Dark Stage with Draggable Glowing Orbs -->
+                    <div id="glassStage" class="lg:col-span-8 relative min-h-[360px] rounded-3xl bg-[#04060E] border border-white/15 overflow-hidden flex items-center justify-center p-6 select-none">
+                        <!-- Subtle Grid Overlay -->
+                        <div class="absolute inset-0 opacity-20 pointer-events-none"
+                             style="background-image: radial-gradient(rgba(255,255,255,0.3) 1px, transparent 1px); background-size: 24px 24px;"></div>
+
+                        <!-- Glowing Orbs (Draggable!) -->
+                        <div id="glassOrb1" data-orb="1"
+                             class="glass-orb ${glassState.autoOrbit ? 'orb-anim-1' : ''} absolute w-44 h-44 rounded-full cursor-grab active:cursor-grabbing"
+                             style="left: 14%; top: 12%; background: radial-gradient(circle, ${colors[0]}, transparent 70%); filter: blur(18px);"></div>
+                        <div id="glassOrb2" data-orb="2"
+                             class="glass-orb ${glassState.autoOrbit ? 'orb-anim-2' : ''} absolute w-52 h-52 rounded-full cursor-grab active:cursor-grabbing"
+                             style="right: 12%; bottom: 10%; background: radial-gradient(circle, ${colors[1]}, transparent 70%); filter: blur(20px);"></div>
+                        <div id="glassOrb3" data-orb="3"
+                             class="glass-orb ${glassState.autoOrbit ? 'orb-anim-3' : ''} absolute w-40 h-40 rounded-full cursor-grab active:cursor-grabbing"
+                             style="left: 42%; bottom: 18%; background: radial-gradient(circle, ${colors[2]}, transparent 70%); filter: blur(16px);"></div>
+
+                        <!-- Floating Liquid Glass Card -->
+                        <div id="liquidGlassCard" class="relative z-10 max-w-md w-full p-6 sm:p-8 text-white transition-all duration-100 pointer-events-auto"
+                             style="background: rgba(255, 255, 255, ${glassState.opacity});
+                                    backdrop-filter: blur(${glassState.blur}px) saturate(180%);
+                                    -webkit-backdrop-filter: blur(${glassState.blur}px) saturate(180%);
+                                    border-radius: 28px;
+                                    border: 1px solid rgba(255, 255, 255, ${Math.max(0.12, glassState.specular * 0.6)});
+                                    box-shadow: 0 25px 50px rgba(0,0,0,0.55), inset 0 1.5px 1px rgba(255,255,255,${glassState.specular});">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-sky-400 shadow-[0_0_10px_#38BDF8]"></span>
+                                    <span class="text-xs font-mono-code tracking-wider uppercase text-white/75">SPATIAL AUDIO // VISION</span>
+                                </div>
+                                <span class="text-xs font-mono-code px-2.5 py-0.5 rounded-full bg-white/10 border border-white/20">
+                                    Lossless 24-bit
+                                </span>
+                            </div>
+
+                            <h3 class="text-2xl font-bold tracking-tight mb-1">Aurora Borealis Synth</h3>
+                            <p class="text-xs sm:text-sm text-white/70 mb-6">
+                                Перетащите цветные светящиеся сферы позади этой линзы мышкой или пальцем, чтобы увидеть живое преломление света.
+                            </p>
+
+                            <!-- Progress Bar inside Glass -->
+                            <div class="w-full h-1.5 bg-white/15 rounded-full overflow-hidden mb-5">
+                                <div class="w-2/3 h-full bg-gradient-to-r from-sky-400 via-purple-400 to-pink-400 rounded-full"></div>
+                            </div>
+
+                            <div class="flex items-center justify-between text-xs font-mono-code text-white/80">
+                                <span id="glassLiveFormula">backdrop-filter: blur(${glassState.blur}px)</span>
+                                <span class="text-sky-300">Drag Orbs ✦</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            initGlassOrbDragging();
+        }
+
+        function updateGlassOptics(param, val) {
+            if (param === 'blur') glassState.blur = Number(val);
+            if (param === 'opacity') glassState.opacity = Number(val) / 100;
+            if (param === 'specular') glassState.specular = Number(val) / 100;
+
+            const card = document.getElementById('liquidGlassCard');
+            if (!card) return;
+            card.style.background = `rgba(255, 255, 255, ${glassState.opacity})`;
+            card.style.backdropFilter = `blur(${glassState.blur}px) saturate(180%)`;
+            card.style.webkitBackdropFilter = `blur(${glassState.blur}px) saturate(180%)`;
+            card.style.borderColor = `rgba(255, 255, 255, ${Math.max(0.12, glassState.specular * 0.6)})`;
+            card.style.boxShadow = `0 25px 50px rgba(0,0,0,0.55), inset 0 1.5px 1px rgba(255,255,255,${glassState.specular})`;
+
+            document.getElementById('glassBlurVal').textContent = `${glassState.blur}px`;
+            document.getElementById('glassOpacityVal').textContent = `${Math.round(glassState.opacity * 100)}%`;
+            document.getElementById('glassSpecularVal').textContent = `${Math.round(glassState.specular * 100)}%`;
+            document.getElementById('glassLiveFormula').textContent = `backdrop-filter: blur(${glassState.blur}px)`;
+        }
+
+        function toggleGlassAutoOrbit() {
+            glassState.autoOrbit = !glassState.autoOrbit;
+            renderGlassPlayground(document.getElementById('playgroundMount'));
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function cycleGlassSpectrum() {
+            glassState.paletteIdx = (glassState.paletteIdx + 1) % GLASS_PALETTES.length;
+            renderGlassPlayground(document.getElementById('playgroundMount'));
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function initGlassOrbDragging() {
+            const stage = document.getElementById('glassStage');
+            if (!stage) return;
+            let activeOrb = null;
+
+            const onPointerMove = (e) => {
+                if (!activeOrb) return;
+                const rect = stage.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                const x = clientX - rect.left - activeOrb.offsetWidth / 2;
+                const y = clientY - rect.top - activeOrb.offsetHeight / 2;
+                activeOrb.style.left = `${x}px`;
+                activeOrb.style.top = `${y}px`;
+                activeOrb.style.right = 'auto';
+                activeOrb.style.bottom = 'auto';
+            };
+
+            const onPointerUp = () => {
+                activeOrb = null;
+            };
+
+            stage.querySelectorAll('.glass-orb').forEach(orb => {
+                orb.addEventListener('mousedown', () => {
+                    orb.classList.remove('orb-anim-1', 'orb-anim-2', 'orb-anim-3');
+                    activeOrb = orb;
+                });
+                orb.addEventListener('touchstart', () => {
+                    orb.classList.remove('orb-anim-1', 'orb-anim-2', 'orb-anim-3');
+                    activeOrb = orb;
+                }, { passive: true });
+            });
+
+            stage.addEventListener('mousemove', onPointerMove);
+            stage.addEventListener('touchmove', onPointerMove, { passive: true });
+            window.addEventListener('mouseup', onPointerUp);
+            window.addEventListener('touchend', onPointerUp);
+        }
+
+        /* ------------------------------------------
+           LAB 4: TACTILE SKEUOMORPHISM PLAYGROUND
+           ------------------------------------------ */
+        let skeuoState = {
+            darkChassis: false,
+            soundEnabled: true,
+            toggles: [true, false, true],
+            dialAngle: 135, // 0 to 270
+            lastPadNote: 'PAD-01 // 440Hz'
+        };
+
+        let audioCtx = null;
+        function playTactileClick(freq = 180, type = 'triangle') {
+            if (!skeuoState.soundEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(45, audioCtx.currentTime + 0.045);
+                gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.045);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch (e) {
+                // Ignore if audio not unlocked
+            }
+        }
+
+        function renderSkeuoPlayground(mount) {
+            const chassisClass = skeuoState.darkChassis ? 'skeuo-chassis-dark' : 'skeuo-chassis-light';
+            const padClass = skeuoState.darkChassis ? 'skeuo-pad-dark' : 'skeuo-pad-light';
+            const freqVal = Math.round(80 + (skeuoState.dialAngle / 270) * 820);
+
+            mount.innerHTML = `
+                <div class="${chassisClass} p-6 sm:p-10 rounded-[28px] transition-all duration-300">
+                    <!-- Top Hardware Header Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-4 pb-6 mb-8 border-b border-black/10">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3.5 h-3.5 rounded-full bg-orange-600 shadow-[0_0_8px_#EA580C]"></div>
+                            <span class="font-mono-code font-bold text-xs sm:text-sm tracking-widest uppercase">
+                                TE-2026 FIELD DECK // TACTILE SERIES
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="toggleSkeuoSound()" class="${padClass} px-3.5 py-1.5 rounded-xl text-xs font-mono-code font-bold flex items-center gap-1.5">
+                                <span>Звук клика: ${skeuoState.soundEnabled ? 'ВКЛ' : 'ВЫКЛ'}</span>
+                            </button>
+                            <button onclick="toggleSkeuoChassis()" class="${padClass} px-3.5 py-1.5 rounded-xl text-xs font-mono-code font-bold">
+                                Корпус: ${skeuoState.darkChassis ? 'Dark Titanium' : 'Cloud Dancer'}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        <!-- Col 1 (4 cols): 3 Physical Toggle Switches with LEDs -->
+                        <div class="lg:col-span-4 space-y-4">
+                            <div class="text-xs font-mono-code uppercase opacity-60 mb-2">01 // Тумблеры питания и шин</div>
+                            ${['ANALOG WARMTH', 'HAPTIC DRIVE', 'OVERDRIVE BOOST'].map((label, idx) => {
+                                const isOn = skeuoState.toggles[idx];
+                                return `
+                                <div onclick="toggleSkeuoSwitch(${idx})"
+                                     class="${padClass} p-4 rounded-2xl flex items-center justify-between cursor-pointer select-none">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-3 h-3 rounded-full transition-all ${isOn ? 'bg-emerald-400 shadow-[0_0_10px_#10B981]' : 'bg-neutral-400/40'}"></span>
+                                        <span class="text-xs font-mono-code font-bold tracking-wider">${label}</span>
+                                    </div>
+                                    <div class="w-12 h-6 rounded-full p-1 transition-colors ${isOn ? 'bg-orange-600' : 'bg-black/20'} flex items-center">
+                                        <div class="w-4 h-4 rounded-full bg-white shadow-md transform transition-transform ${isOn ? 'translate-x-6' : 'translate-x-0'}"></div>
+                                    </div>
+                                </div>
+                                `;
+                            }).join('')}
+                        </div>
+
+                        <!-- Col 2 (4 cols): Tactile Drum / Synth Key Pads (2x2 Grid) -->
+                        <div class="lg:col-span-4">
+                            <div class="text-xs font-mono-code uppercase opacity-60 mb-3">02 // Тактильные клавиши-пэды</div>
+                            <div class="grid grid-cols-2 gap-4">
+                                ${[
+                                    { code: 'A1', name: 'KICK 808', freq: 120 },
+                                    { code: 'A2', name: 'SNARE SNAP', freq: 260 },
+                                    { code: 'B1', name: 'CHORD SYNTH', freq: 380 },
+                                    { code: 'B2', name: 'SUB PULSE', freq: 520 }
+                                ].map(pad => `
+                                    <button onclick="triggerSkeuoPad('${pad.code} // ${pad.name}', ${pad.freq}, this)"
+                                            class="${padClass} h-28 rounded-2xl p-4 flex flex-col justify-between items-start text-left select-none focus:outline-none">
+                                        <div class="w-full flex items-center justify-between">
+                                            <span class="text-xs font-mono-code font-bold opacity-60">${pad.code}</span>
+                                            <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                                        </div>
+                                        <span class="font-display font-bold text-sm tracking-tight">${pad.name}</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Col 3 (4 cols): Interactive Rotary Knob / Dial + Digital Readout -->
+                        <div class="lg:col-span-4 flex flex-col items-center justify-between space-y-5">
+                            <div class="w-full text-xs font-mono-code uppercase opacity-60 text-center">03 // Колесо-энкодер (кликайте / крутите)</div>
+
+                            <!-- Rotary Knob -->
+                            <div class="relative flex items-center justify-center">
+                                <div onclick="stepSkeuoDial(30)"
+                                     title="Кликните для поворота энкодера"
+                                     class="${padClass} w-36 h-36 rounded-full flex items-center justify-center cursor-pointer relative">
+                                    <!-- Rotating Inner Cap -->
+                                    <div id="skeuoKnobInner" class="w-28 h-28 rounded-full border border-black/10 flex justify-center pt-3 transition-transform duration-200"
+                                         style="transform: rotate(${skeuoState.dialAngle - 135}deg);">
+                                        <div class="w-1.5 h-6 rounded-full bg-orange-600 shadow-[0_0_6px_#EA580C]"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Slider for smooth rotation -->
+                            <input type="range" min="0" max="270" value="${skeuoState.dialAngle}"
+                                   oninput="setSkeuoDial(this.value)"
+                                   class="w-48 accent-orange-600 cursor-pointer">
+
+                            <!-- Recessed OLED Display -->
+                            <div class="w-full p-3.5 rounded-xl bg-[#111315] text-amber-400 font-mono-code text-xs border border-white/10 shadow-inner flex items-center justify-between">
+                                <span id="skeuoPadStatus">${skeuoState.lastPadNote}</span>
+                                <span id="skeuoFreqReadout" class="text-emerald-400 font-bold">${freqVal} Hz</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleSkeuoChassis() {
+            skeuoState.darkChassis = !skeuoState.darkChassis;
+            playTactileClick(220, 'sine');
+            renderSkeuoPlayground(document.getElementById('playgroundMount'));
+        }
+
+        function toggleSkeuoSound() {
+            skeuoState.soundEnabled = !skeuoState.soundEnabled;
+            if (skeuoState.soundEnabled) playTactileClick(300, 'triangle');
+            renderSkeuoPlayground(document.getElementById('playgroundMount'));
+        }
+
+        function toggleSkeuoSwitch(idx) {
+            skeuoState.toggles[idx] = !skeuoState.toggles[idx];
+            playTactileClick(skeuoState.toggles[idx] ? 320 : 160, 'triangle');
+            renderSkeuoPlayground(document.getElementById('playgroundMount'));
+        }
+
+        function triggerSkeuoPad(label, freq, btnEl) {
+            skeuoState.lastPadNote = label;
+            playTactileClick(freq, 'sawtooth');
+            const status = document.getElementById('skeuoPadStatus');
+            if (status) status.textContent = label;
+            if (btnEl) {
+                btnEl.classList.add('pressed');
+                setTimeout(() => btnEl.classList.remove('pressed'), 140);
+            }
+        }
+
+        function stepSkeuoDial(delta) {
+            const next = (skeuoState.dialAngle + delta) % 300;
+            setSkeuoDial(next > 270 ? 0 : next);
+        }
+
+        function setSkeuoDial(angle) {
+            skeuoState.dialAngle = Number(angle);
+            playTactileClick(140 + skeuoState.dialAngle, 'sine');
+            const knob = document.getElementById('skeuoKnobInner');
+            const readout = document.getElementById('skeuoFreqReadout');
+            if (knob) knob.style.transform = `rotate(${skeuoState.dialAngle - 135}deg)`;
+            if (readout) {
+                const freqVal = Math.round(80 + (skeuoState.dialAngle / 270) * 820);
+                readout.textContent = `${freqVal} Hz`;
+            }
+        }
+
+        /* ------------------------------------------
+           LAB 5: KINETIC & CRAFT PLAYGROUND
+           ------------------------------------------ */
+        let kineticState = {
+            handAccents: true,
+            mode: 'repel', // 'repel', 'wave', 'skew'
+            word: 'ТВОРЧЕСТВО'
+        };
+
+        function renderKineticPlayground(mount) {
+            const chars = kineticState.word.split('');
+
+            mount.innerHTML = `
+                <div id="kineticWrapper" class="${kineticState.handAccents ? 'hand-accents-on' : ''} space-y-6">
+                    <!-- Controls Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-4 p-4 bg-[#EAE2D3] border border-[#141413]">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-xs font-mono-code uppercase font-bold mr-2">Режим кинетики курсора:</span>
+                            <button onclick="setKineticMode('repel')"
+                                    class="px-3 py-1.5 text-xs font-mono-code border border-[#141413] ${kineticState.mode === 'repel' ? 'bg-[#141413] text-white' : 'bg-[#FBF9F5] text-[#141413]'}">
+                                Магнит и масштаб
+                            </button>
+                            <button onclick="setKineticMode('skew')"
+                                    class="px-3 py-1.5 text-xs font-mono-code border border-[#141413] ${kineticState.mode === 'skew' ? 'bg-[#141413] text-white' : 'bg-[#FBF9F5] text-[#141413]'}">
+                                Эластичный наклон
+                            </button>
+                            <button onclick="setKineticMode('wave')"
+                                    class="px-3 py-1.5 text-xs font-mono-code border border-[#141413] ${kineticState.mode === 'wave' ? 'bg-[#141413] text-white' : 'bg-[#FBF9F5] text-[#141413]'}">
+                                Вертикальная волна
+                            </button>
+                        </div>
+
+                        <button onclick="toggleKineticHandAccents()"
+                                class="px-4 py-2 text-xs font-mono-code font-bold uppercase border border-[#141413] flex items-center gap-2 transition ${kineticState.handAccents ? 'bg-[#D9381E] text-white' : 'bg-[#FBF9F5] text-[#141413]'}">
+                            <i data-lucide="pen-tool" class="w-3.5 h-3.5"></i>
+                            <span>Ручные акценты (SVG): ${kineticState.handAccents ? 'ВКЛ' : 'ВЫКЛ'}</span>
+                        </button>
+                    </div>
+
+                    <!-- Interactive Kinetic Canvas -->
+                    <div id="kineticStage" class="relative p-8 sm:p-14 bg-[#FBF9F5] border border-[#141413] overflow-hidden select-none">
+                        <!-- Editorial Broken Grid Top Note -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-8 border-b border-[#141413]/20 pb-4">
+                            <span class="font-mono-code text-xs uppercase tracking-widest text-[#4A4842]">
+                                ISSUE N°26 // HUMAN CRAFT OVER ALGORITHMS
+                            </span>
+                            <span class="font-serif-editorial italic text-base sm:text-lg text-[#D9381E]">
+                                «Проведите курсором сквозь буквы ниже»
+                            </span>
+                        </div>
+
+                        <!-- Giant Kinetic Letters -->
+                        <div id="kineticLettersRow" class="flex flex-wrap items-center justify-center py-6 sm:py-10 cursor-crosshair">
+                            ${chars.map((ch, i) => `
+                                <span data-idx="${i}"
+                                      class="kinetic-char inline-block font-display font-extrabold text-4xl sm:text-7xl lg:text-8xl tracking-tight text-[#141413] transition-transform duration-100 ease-out px-0.5">
+                                    ${ch}
+                                </span>
+                            `).join('')}
+                        </div>
+
+                        <!-- Editorial Sub-statement with Hand-drawn SVG Underlines & Circles -->
+                        <div class="mt-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center pt-6 border-t border-[#141413]/20">
+                            <div class="md:col-span-8 text-lg sm:text-2xl leading-relaxed text-[#141413]">
+                                Когда типографика сочетает строгий гротеск и
+                                <span class="relative inline-block font-serif-editorial italic font-semibold px-1">
+                                    живую рукописную душу
+                                    <!-- Hand-drawn SVG Underline -->
+                                    <svg class="absolute left-0 -bottom-2 w-full h-3 pointer-events-none" viewBox="0 0 220 16" fill="none">
+                                        <path class="hand-stroke" d="M3 11C55 3 155 4 217 12" stroke="#D9381E" stroke-width="3.5" stroke-linecap="round"/>
+                                    </svg>
+                                </span>,
+                                интерфейс перестает быть холодным шаблоном и становится
+                                <span class="relative inline-block px-2 font-bold">
+                                    искусством
+                                    <!-- Hand-drawn SVG Circle -->
+                                    <svg class="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] pointer-events-none" viewBox="0 0 160 60" fill="none">
+                                        <path class="hand-stroke" d="M12 30C12 12 45 5 85 6C128 7 152 17 149 33C146 49 110 55 68 53C28 51 8 40 16 24" stroke="#D9381E" stroke-width="2.5" stroke-linecap="round"/>
+                                    </svg>
+                                </span>.
+                            </div>
+                            <div class="md:col-span-4 flex justify-start md:justify-end">
+                                <button onclick="cycleKineticWord()" class="px-4 py-2.5 bg-[#141413] text-[#FBF9F5] text-xs font-mono-code uppercase tracking-wider hover:bg-[#D9381E] transition">
+                                    Сменить слово холста ↻
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            initKineticTypographyListeners();
+        }
+
+        function setKineticMode(mode) {
+            kineticState.mode = mode;
+            renderKineticPlayground(document.getElementById('playgroundMount'));
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function toggleKineticHandAccents() {
+            kineticState.handAccents = !kineticState.handAccents;
+            const wrap = document.getElementById('kineticWrapper');
+            if (wrap) wrap.classList.toggle('hand-accents-on', kineticState.handAccents);
+            renderKineticPlayground(document.getElementById('playgroundMount'));
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function cycleKineticWord() {
+            const words = ['ТВОРЧЕСТВО', 'ТИПОГРАФИКА', 'АСИММЕТРИЯ', 'МАНИФЕСТ 26'];
+            const nextIdx = (words.indexOf(kineticState.word) + 1) % words.length;
+            kineticState.word = words[nextIdx];
+            renderKineticPlayground(document.getElementById('playgroundMount'));
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function initKineticTypographyListeners() {
+            const stage = document.getElementById('kineticStage');
+            const chars = document.querySelectorAll('.kinetic-char');
+            if (!stage || !chars.length) return;
+
+            const handleMove = (e) => {
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                chars.forEach(ch => {
+                    const rect = ch.getBoundingClientRect();
+                    const cx = rect.left + rect.width / 2;
+                    const cy = rect.top + rect.height / 2;
+                    const dx = clientX - cx;
+                    const dy = clientY - cy;
+                    const dist = Math.hypot(dx, dy);
+                    const maxDist = 240;
+
+                    if (dist < maxDist) {
+                        const factor = 1 - dist / maxDist;
+                        if (kineticState.mode === 'repel') {
+                            const moveX = -(dx / dist) * factor * 22;
+                            const moveY = -(dy / dist) * factor * 22;
+                            const scale = 1 + factor * 0.38;
+                            ch.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`;
+                            ch.style.color = factor > 0.45 ? '#D9381E' : '#141413';
+                        } else if (kineticState.mode === 'skew') {
+                            const skewX = (dx / maxDist) * 28;
+                            const rot = (dy / maxDist) * 14;
+                            ch.style.transform = `skewX(${skewX}deg) rotate(${rot}deg) scale(${1 + factor * 0.2})`;
+                            ch.style.color = factor > 0.5 ? '#D9381E' : '#141413';
+                        } else if (kineticState.mode === 'wave') {
+                            const liftY = -factor * 38;
+                            ch.style.transform = `translateY(${liftY}px) scaleY(${1 + factor * 0.35})`;
+                            ch.style.color = factor > 0.4 ? '#D9381E' : '#141413';
+                        }
+                    } else {
+                        ch.style.transform = 'translate(0,0) scale(1) skewX(0deg)';
+                        ch.style.color = '#141413';
+                    }
+                });
+            };
+
+            const resetChars = () => {
+                chars.forEach(ch => {
+                    ch.style.transform = 'translate(0,0) scale(1) skewX(0deg)';
+                    ch.style.color = '#141413';
+                });
+            };
+
+            stage.addEventListener('mousemove', handleMove);
+            stage.addEventListener('touchmove', handleMove, { passive: true });
+            stage.addEventListener('mouseleave', resetChars);
+        }
+
+        /* ------------------------------------------
+           LAB 6: RETRO-DIGITAL / TERMINAL PLAYGROUND
+           ------------------------------------------ */
+        let retroState = {
+            crtEnabled: true,
+            phosphor: '#00FF66',
+            cols: 16,
+            rows: 8,
+            pixels: [],
+            logs: [
+                'RETRO-OS v2.026 KERNEL INITIALIZED...',
+                'MOUNTING ASCII GRAPHICS ENGINE [16x8]... OK',
+                'ВВЕДИТЕ КОМАНДУ ИЛИ НАЖМИТЕ БЫСТРЫЕ ЧИПЫ НИЖЕ.'
+            ]
+        };
+
+        // Initialize default smiley pattern on 16x8 grid
+        function initRetroPixels(preset = '2026') {
+            const total = retroState.cols * retroState.rows;
+            retroState.pixels = new Array(total).fill(0);
+            if (preset === 'smile') {
+                [19, 20, 27, 28, 35, 36, 43, 44, 66, 77, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92].forEach(i => retroState.pixels[i] = 1);
+            } else if (preset === '2026') {
+                // Simple wave/checker bar
+                for (let r = 1; r < 7; r++) {
+                    for (let c = 2; c < 14; c++) {
+                        if ((r + c) % 2 === 0) retroState.pixels[r * 16 + c] = 1;
+                    }
+                }
+            }
+        }
+        initRetroPixels('smile');
+
+        function renderRetroPlayground(mount) {
+            const color = retroState.phosphor;
+
+            mount.innerHTML = `
+                <div id="retroWindow" class="relative bg-[#060A07] border-2 p-4 sm:p-6 font-mono-code overflow-hidden"
+                     style="border-color: ${color}; color: ${color}; box-shadow: 0 0 25px ${color}25;">
+                    
+                    <!-- Optional CRT Scanline Overlay -->
+                    <div id="retroCrtOverlay" class="${retroState.crtEnabled ? 'crt-overlay' : 'hidden'} absolute inset-0 z-20"></div>
+
+                    <!-- Terminal Window Titlebar -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-6 border-b" style="border-color: ${color};">
+                        <div class="flex items-center gap-2 text-xs sm:text-sm font-bold">
+                            <span>[TTY-01 // RETRO-DIGITAL MATRIX]</span>
+                            <span class="animate-pulse">█</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <!-- Phosphor Switcher -->
+                            <button onclick="setRetroPhosphor('#00FF66')" class="px-2 py-1 text-xs border" style="border-color:#00FF66; color:#00FF66;">GREEN</button>
+                            <button onclick="setRetroPhosphor('#FFB000')" class="px-2 py-1 text-xs border" style="border-color:#FFB000; color:#FFB000;">AMBER</button>
+                            <button onclick="setRetroPhosphor('#00F0FF')" class="px-2 py-1 text-xs border" style="border-color:#00F0FF; color:#00F0FF;">CYAN</button>
+                            <button onclick="toggleRetroCrt()" class="px-2.5 py-1 text-xs font-bold" style="background:${color}; color:#050806;">
+                                CRT: ${retroState.crtEnabled ? 'ON' : 'OFF'}
+                            </button>
+                            <button onclick="triggerRetroGlitch()" class="px-2.5 py-1 text-xs font-bold border border-[#FF0055] text-[#FF0055] hover:bg-[#FF0055] hover:text-white transition">
+                                ⚡ GLITCH
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                        <!-- Left 6 cols: Interactive ASCII Pixel Matrix -->
+                        <div class="lg:col-span-6 space-y-3">
+                            <div class="flex items-center justify-between text-xs">
+                                <span>01 // ИНТЕРАКТИВНАЯ ASCII-МАТРИЦА (РИСУЙТЕ МЫШКОЙ):</span>
+                                <div class="flex gap-2">
+                                    <button onclick="loadRetroPreset('smile')" class="underline text-xs">SMILE</button>
+                                    <button onclick="loadRetroPreset('2026')" class="underline text-xs">GRID</button>
+                                    <button onclick="loadRetroPreset('clear')" class="underline text-xs">CLEAR</button>
+                                </div>
+                            </div>
+
+                            <!-- 16x8 Pixel Grid -->
+                            <div id="retroMatrixGrid" class="grid grid-cols-16 gap-1 p-2 border bg-black/60 select-none"
+                                 style="grid-template-columns: repeat(16, minmax(0, 1fr)); border-color: ${color};">
+                                ${retroState.pixels.map((val, idx) => `
+                                    <div data-cell="${idx}"
+                                         class="retro-cell aspect-square flex items-center justify-center text-[10px] cursor-pointer border border-white/5 transition-colors"
+                                         style="background: ${val ? color : 'transparent'}; color: ${val ? '#050806' : color};">
+                                        ${val ? '#' : '·'}
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <div class="text-[11px] opacity-75 flex justify-between">
+                                <span id="retroAsciiCount">ACTIVE PIXELS: ${retroState.pixels.filter(Boolean).length}/128</span>
+                                <span>CHARSET: [ # / · ]</span>
+                            </div>
+                        </div>
+
+                        <!-- Right 6 cols: Command Line Emulator -->
+                        <div class="lg:col-span-6 flex flex-col justify-between space-y-3">
+                            <div class="text-xs">02 // ТЕРМИНАЛ КОМАНД (CLI):</div>
+
+                            <!-- Output Log Box -->
+                            <div id="retroTerminalLog" class="h-44 overflow-y-auto p-3 border bg-black/80 text-xs space-y-1.5 leading-relaxed"
+                                 style="border-color: ${color};">
+                                ${retroState.logs.map(l => `<div>&gt; ${l}</div>`).join('')}
+                            </div>
+
+                            <!-- Quick Command Chips -->
+                            <div class="flex flex-wrap gap-1.5 text-xs">
+                                ${['help', 'trends', 'ascii', 'coffee', 'clear'].map(cmd => `
+                                    <button onclick="runRetroCommand('${cmd}')"
+                                            class="px-2.5 py-1 border hover:opacity-80 transition"
+                                            style="border-color: ${color};">
+                                        /${cmd}
+                                    </button>
+                                `).join('')}
+                            </div>
+
+                            <!-- Input Line -->
+                            <form onsubmit="handleRetroForm(event)" class="flex gap-2">
+                                <input id="retroCliInput" type="text" placeholder="Введите команду (например, trends)..."
+                                       class="flex-1 bg-black px-3 py-2 text-xs border focus:outline-none"
+                                       style="border-color: ${color}; color: ${color};">
+                                <button type="submit" class="px-4 py-2 text-xs font-bold uppercase"
+                                        style="background: ${color}; color: #050806;">
+                                    EXEC
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            initRetroMatrixDrawing();
+        }
+
+        function initRetroMatrixDrawing() {
+            const grid = document.getElementById('retroMatrixGrid');
+            if (!grid) return;
+            let isDrawing = false;
+            let paintValue = 1;
+
+            const paintCell = (cell) => {
+                const idx = Number(cell.dataset.cell);
+                if (Number.isNaN(idx)) return;
+                retroState.pixels[idx] = paintValue;
+                cell.style.background = paintValue ? retroState.phosphor : 'transparent';
+                cell.style.color = paintValue ? '#050806' : retroState.phosphor;
+                cell.textContent = paintValue ? '#' : '·';
+                const counter = document.getElementById('retroAsciiCount');
+                if (counter) counter.textContent = `ACTIVE PIXELS: ${retroState.pixels.filter(Boolean).length}/128`;
+            };
+
+            grid.querySelectorAll('.retro-cell').forEach(cell => {
+                cell.addEventListener('mousedown', () => {
+                    isDrawing = true;
+                    const idx = Number(cell.dataset.cell);
+                    paintValue = retroState.pixels[idx] ? 0 : 1;
+                    paintCell(cell);
+                });
+                cell.addEventListener('mouseenter', () => {
+                    if (isDrawing) paintCell(cell);
+                });
+            });
+
+            window.addEventListener('mouseup', () => { isDrawing = false; });
+        }
+
+        function setRetroPhosphor(hex) {
+            retroState.phosphor = hex;
+            renderRetroPlayground(document.getElementById('playgroundMount'));
+        }
+
+        function toggleRetroCrt() {
+            retroState.crtEnabled = !retroState.crtEnabled;
+            renderRetroPlayground(document.getElementById('playgroundMount'));
+        }
+
+        function triggerRetroGlitch() {
+            const win = document.getElementById('retroWindow');
+            if (!win) return;
+            win.classList.remove('glitch-active');
+            void win.offsetWidth;
+            win.classList.add('glitch-active');
+            retroState.logs.push('WARNING: SIGNAL GLITCH INJECTED [RGB_SPLIT_OK]');
+            updateRetroLogUI();
+        }
+
+        function loadRetroPreset(preset) {
+            initRetroPixels(preset);
+            renderRetroPlayground(document.getElementById('playgroundMount'));
+        }
+
+        function handleRetroForm(e) {
+            e.preventDefault();
+            const input = document.getElementById('retroCliInput');
+            if (!input || !input.value.trim()) return;
+            runRetroCommand(input.value.trim().toLowerCase());
+            input.value = '';
+        }
+
+        function runRetroCommand(cmd) {
+            if (cmd === 'clear') {
+                retroState.logs = ['TERMINAL BUFFER CLEARED.'];
+            } else if (cmd === 'help') {
+                retroState.logs.push('ДОСТУПНЫЕ КОМАНДЫ: /trends, /ascii, /coffee, /clear');
+            } else if (cmd === 'trends') {
+                retroState.logs.push('2026 REPORT: BENTO [96%], LIQUID GLASS [94%], KINETIC [91%], BRUTAL [89%], RETRO [87%], SKEUO [84%]');
+            } else if (cmd === 'ascii') {
+                retroState.logs.push('┌──────────────────────────┐');
+                retroState.logs.push('│  ASCII ENGINE 2026 READY │');
+                retroState.logs.push('└──────────────────────────┘');
+            } else if (cmd === 'coffee') {
+                retroState.logs.push('BREWING ESPRESSO... [██████████ 100%] ГОТОВО ☕');
+            } else {
+                retroState.logs.push(`EXEC "${cmd}" -> OK (STATUS 200)`);
+            }
+            updateRetroLogUI();
+        }
+
+        function updateRetroLogUI() {
+            const box = document.getElementById('retroTerminalLog');
+            if (!box) return;
+            box.innerHTML = retroState.logs.map(l => `<div>&gt; ${l}</div>`).join('');
+            box.scrollTop = box.scrollHeight;
+        }
+
+        /* ==========================================
+           CLIPBOARD & TOAST HELPERS
+           ========================================== */
+        function copyCssSnippet() {
+            const code = STYLES_DATA[currentStyleKey].cssCode;
+            copyTextToClipboard(code, `CSS-рецепт «${STYLES_DATA[currentStyleKey].title}» скопирован!`);
+        }
+
+        function copyTextToClipboard(text, message) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast(message);
+            } catch (err) {
+                showToast('Не удалось скопировать');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        let toastTimeout = null;
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            const msgEl = document.getElementById('toastMessage');
+            msgEl.textContent = msg;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 2600);
+        }
+
+        /* Keyboard Shortcuts 1-6 for Instant Style Switching */
+        window.addEventListener('keydown', (e) => {
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+            const num = parseInt(e.key, 10);
+            if (num >= 1 && num <= 6) {
+                switchStyle(STYLE_ORDER[num - 1]);
+            }
+        });
+
+        /* Initialize Application on Load */
+        window.onload = function() {
+            switchStyle('bento');
+        };
+    </script>
+</body>
+</html>

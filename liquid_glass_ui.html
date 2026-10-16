@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquid Glass UI — Интерактивная лаборатория жидкого стекла</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Управляемые переменные ("Ручки") */
+            --lg-blur: 18px;
+            --lg-opacity: 0.09;
+            --lg-refraction: 18;
+            --lg-rim: 0.55;
+            --lg-radius: 28px;
+            --lg-saturate: 170%;
+            --lg-chromatic: 1;
+            
+            /* Координаты курсора для глобальной подсветки граней */
+            --mouse-x: 50vw;
+            --mouse-y: 50vh;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #05070f;
+            color: #f8fafc;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        code, pre {
+            font-family: 'JetBrains Mono', monospace;
+            user-select: text;
+        }
+
+        /* ==========================================
+           LIQUID GLASS CORE ENGINE (Жидкое стекло)
+           ========================================== */
+        .liquid-glass {
+            position: relative;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, calc(var(--lg-opacity) * 1.45)) 0%,
+                rgba(255, 255, 255, calc(var(--lg-opacity) * 0.45)) 50%,
+                rgba(255, 255, 255, calc(var(--lg-opacity) * 0.85)) 100%
+            );
+            backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+            -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+            border-radius: var(--lg-radius);
+            
+            /* Многослойный 3D объем капли: внешняя тень + верхний левый блик + нижний правый рефлекс + внутреннее свечение */
+            box-shadow: 
+                0 24px 48px -12px rgba(0, 0, 0, 0.55),
+                0 4px 16px 0 rgba(0, 0, 0, 0.25),
+                inset 0 1.5px 2px 0 rgba(255, 255, 255, calc(var(--lg-rim) * 0.95)),
+                inset 1.5px 0 2px 0 rgba(255, 255, 255, calc(var(--lg-rim) * 0.6)),
+                inset 0 -1.5px 3px 0 rgba(255, 255, 255, calc(var(--lg-rim) * 0.25)),
+                inset 0 0 28px 0 rgba(255, 255, 255, calc(var(--lg-opacity) * 0.6));
+            
+            border: 1px solid rgba(255, 255, 255, calc(var(--lg-rim) * 0.32));
+            transition: border-radius 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+                        transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+                        box-shadow 0.25s ease;
+        }
+
+        /* Оптическое преломление краев и хроматическая дисперсия */
+        .liquid-glass::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1.2px;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, calc(var(--lg-rim) * 0.9)) 0%,
+                rgba(255, 255, 255, calc(var(--lg-rim) * 0.12)) 40%,
+                rgba(120, 220, 255, calc(var(--lg-rim) * 0.2 * var(--lg-chromatic))) 75%,
+                rgba(255, 140, 220, calc(var(--lg-rim) * 0.45 * var(--lg-chromatic))) 100%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Внутренний жидкий мениск (верхняя световая дуга) */
+        .liquid-glass::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 8%;
+            right: 8%;
+            height: 35%;
+            background: radial-gradient(
+                ellipse at 50% 0%,
+                rgba(255, 255, 255, calc(var(--lg-rim) * 0.28)) 0%,
+                rgba(255, 255, 255, 0) 70%
+            );
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Вариант для мелких интерактивных капсул/кнопок внутри стекла */
+        .liquid-pill {
+            background: rgba(255, 255, 255, calc(var(--lg-opacity) * 1.3 + 0.03));
+            backdrop-filter: blur(calc(var(--lg-blur) * 0.6));
+            -webkit-backdrop-filter: blur(calc(var(--lg-blur) * 0.6));
+            border: 1px solid rgba(255, 255, 255, calc(var(--lg-rim) * 0.4));
+            box-shadow: 
+                inset 0 1px 1px rgba(255, 255, 255, calc(var(--lg-rim) * 0.8)),
+                0 6px 16px -4px rgba(0, 0, 0, 0.35);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .liquid-pill:hover {
+            background: rgba(255, 255, 255, calc(var(--lg-opacity) * 1.9 + 0.06));
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                inset 0 1.5px 2px rgba(255, 255, 255, calc(var(--lg-rim) * 0.95)),
+                0 10px 24px -4px rgba(0, 0, 0, 0.45);
+        }
+
+        .liquid-pill:active {
+            transform: translateY(0px) scale(0.97);
+        }
+
+        /* ==========================================
+           DYNAMIC BACKGROUND & SVG REFRACTION LAYER
+           ========================================== */
+        #bg-stage {
+            position: fixed;
+            inset: -40px;
+            z-index: 0;
+            pointer-events: none;
+            /* Применяем настоящий SVG фильтр жидкого преломления к фоновой сцене */
+            filter: url(#liquid-refraction-filter);
+            transition: background-color 0.7s ease;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(36px);
+            opacity: 0.85;
+            mix-blend-mode: screen;
+            animation: floatBlob 18s infinite alternate ease-in-out;
+            transition: background 0.8s ease, width 0.8s ease, height 0.8s ease;
+        }
+
+        .blob-1 {
+            width: 48vw;
+            height: 48vw;
+            max-width: 680px;
+            max-height: 680px;
+            top: -8%;
+            left: -5%;
+            animation-duration: 16s;
+        }
+
+        .blob-2 {
+            width: 42vw;
+            height: 42vw;
+            max-width: 600px;
+            max-height: 600px;
+            bottom: -10%;
+            right: -5%;
+            animation-duration: 21s;
+            animation-delay: -5s;
+        }
+
+        .blob-3 {
+            width: 36vw;
+            height: 36vw;
+            max-width: 500px;
+            max-height: 500px;
+            top: 32%;
+            left: 38%;
+            animation-duration: 14s;
+            animation-delay: -9s;
+        }
+
+        .blob-4 {
+            width: 26vw;
+            height: 26vw;
+            max-width: 380px;
+            max-height: 380px;
+            bottom: 18%;
+            left: 12%;
+            animation-duration: 19s;
+            animation-delay: -3s;
+        }
+
+        @keyframes floatBlob {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+                border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+            }
+            33% {
+                transform: translate(60px, -40px) scale(1.08) rotate(60deg);
+                border-radius: 70% 30% 46% 54% / 30% 29% 71% 70%;
+            }
+            66% {
+                transform: translate(-40px, 50px) scale(0.94) rotate(120deg);
+                border-radius: 35% 65% 31% 69% / 57% 59% 41% 43%;
+            }
+            100% {
+                transform: translate(30px, 20px) scale(1.04) rotate(180deg);
+                border-radius: 58% 42% 38% 62% / 49% 60% 40% 51%;
+            }
+        }
+
+        /* Слой «Сетка + Типографика» для проверки оптического преломления */
+        .optical-grid-pattern {
+            background-size: 48px 48px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.14) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+        }
+
+        /* Курсорный жидкий источник света */
+        #cursor-light {
+            position: fixed;
+            width: 440px;
+            height: 440px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.22) 0%, rgba(120,210,255,0.1) 35%, rgba(0,0,0,0) 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1;
+            mix-blend-mode: screen;
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+
+        /* ==========================================
+           CUSTOM RANGE SLIDERS & KNOBS ("Ручки")
+           ========================================== */
+        input[type="range"].glass-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"].glass-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.98), rgba(200, 230, 255, 0.45) 60%, rgba(255, 255, 255, 0.85) 100%);
+            border: 1.5px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.5),
+                inset 0 2px 4px rgba(255, 255, 255, 1);
+            backdrop-filter: blur(4px);
+            cursor: grab;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+        }
+
+        input[type="range"].glass-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.22);
+            box-shadow: 
+                0 0 16px rgba(165, 243, 252, 0.75),
+                0 4px 12px rgba(0, 0, 0, 0.6),
+                inset 0 2px 4px rgba(255, 255, 255, 1);
+        }
+
+        input[type="range"].glass-slider::-webkit-slider-thumb:active {
+            cursor: grabbing;
+            transform: scale(1.1) scaleX(1.16);
+        }
+
+        /* Анимация эквалайзера в плеере */
+        @keyframes eqBounce {
+            0%, 100% { height: 22%; }
+            50% { height: 95%; }
+        }
+        .eq-bar {
+            animation: eqBounce 1.1s infinite ease-in-out;
+        }
+        .eq-paused .eq-bar {
+            animation-play-state: paused;
+            height: 20% !important;
+            transition: height 0.3s ease;
+        }
+
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #05070f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.18);
+            border-radius: 999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.32);
+        }
+
+        /* Наложение блика на 3D-карту */
+        #card-glare {
+            background: radial-gradient(
+                circle at 50% 50%,
+                rgba(255, 255, 255, 0.42) 0%,
+                rgba(255, 255, 255, 0.12) 30%,
+                transparent 68%
+            );
+            mix-blend-mode: overlay;
+        }
+
+        /* Увеличение иконок в док-панели */
+        .dock-item {
+            transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        margin 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        background 0.2s ease;
+        }
+    </style>
+</head>
+<body class="relative selection:bg-cyan-400/30 selection:text-cyan-100 pb-36">
+
+    <!-- ==========================================
+         SVG OPTICAL REFRACTION FILTER DEFINITION
+         ========================================== -->
+    <svg class="fixed w-0 h-0 pointer-events-none" aria-hidden="true">
+        <defs>
+            <!-- Настоящий фильтр жидкого преломления (Turbulence + DisplacementMap) -->
+            <filter id="liquid-refraction-filter" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+                <feTurbulence 
+                    id="svg-turbulence"
+                    type="fractalNoise" 
+                    baseFrequency="0.012 0.015" 
+                    numOctaves="2" 
+                    seed="8" 
+                    result="noise" 
+                />
+                <feDisplacementMap 
+                    id="svg-displacement"
+                    in="SourceGraphic" 
+                    in2="noise" 
+                    scale="18" 
+                    xChannelSelector="R" 
+                    yChannelSelector="G" 
+                    result="refracted"
+                />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Интерактивное световое пятно за курсором -->
+    <div id="cursor-light"></div>
+
+    <!-- ==========================================
+         DYNAMIC FLUID BACKGROUND STAGE
+         ========================================== -->
+    <div id="bg-stage" class="overflow-hidden">
+        <!-- Анимированные жидкие сферы -->
+        <div id="blob-1" class="blob blob-1" style="background: radial-gradient(circle, #06b6d4 0%, #3b82f6 65%, transparent 100%);"></div>
+        <div id="blob-2" class="blob blob-2" style="background: radial-gradient(circle, #a855f7 0%, #ec4899 65%, transparent 100%);"></div>
+        <div id="blob-3" class="blob blob-3" style="background: radial-gradient(circle, #10b981 0%, #0ea5e9 65%, transparent 100%);"></div>
+        <div id="blob-4" class="blob blob-4" style="background: radial-gradient(circle, #6366f1 0%, #2dd4bf 65%, transparent 100%);"></div>
+
+        <!-- Тестовый слой «Сетка + Типографика» для наглядной проверки рефракции и размытия -->
+        <div id="optical-test-layer" class="absolute inset-0 optical-grid-pattern opacity-25 transition-opacity duration-500 flex flex-col justify-between p-12 select-none">
+            <div class="flex justify-between items-center text-white/30 font-mono text-xs tracking-widest uppercase">
+                <span>OPTICAL REFRACTION TEST TARGET // СЕТКА ПРЕЛОМЛЕНИЯ</span>
+                <span>INDEX OF REFRACTION: n = 1.52</span>
+            </div>
+            <div class="my-auto flex flex-col items-center justify-center text-center pointer-events-none">
+                <div class="text-[8vw] font-extrabold tracking-tighter leading-none text-white/25 uppercase">
+                    ЖИДКОЕ СТЕКЛО
+                </div>
+                <div class="text-[3.2vw] font-light tracking-[0.28em] text-cyan-200/30 uppercase mt-2">
+                    SPATIAL REFRACTION ENGINE • 2026
+                </div>
+                <!-- Контрастные геометрические фигуры для проверки искажений -->
+                <div class="mt-8 flex items-center gap-12 opacity-60">
+                    <div class="w-32 h-32 rounded-full border-4 border-dashed border-cyan-300/60 flex items-center justify-center">
+                        <div class="w-12 h-12 rounded-full bg-pink-400/60"></div>
+                    </div>
+                    <div class="w-48 h-24 border-2 border-white/50 grid grid-cols-4">
+                        <div class="bg-white/40"></div>
+                        <div class="bg-transparent"></div>
+                        <div class="bg-cyan-400/50"></div>
+                        <div class="bg-transparent"></div>
+                        <div class="bg-transparent"></div>
+                        <div class="bg-fuchsia-400/50"></div>
+                        <div class="bg-transparent"></div>
+                        <div class="bg-white/40"></div>
+                    </div>
+                    <div class="w-32 h-32 rounded-full border-4 border-amber-300/60 flex items-center justify-center">
+                        <span class="font-mono text-2xl font-bold text-white/70">Aa Яя</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-between items-center text-white/30 font-mono text-xs tracking-widest">
+                <span>CAUSTICS & SPECULAR RIM</span>
+                <span>SVG TURBULENCE DISPLACEMENT</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         TOP NAVIGATION BAR
+         ========================================== -->
+    <header class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 pt-6">
+        <nav class="liquid-glass px-5 py-3.5 flex flex-wrap items-center justify-between gap-4">
+            <!-- Логотип -->
+            <div class="flex items-center gap-3.5 z-10">
+                <div class="w-10 h-10 rounded-2xl liquid-pill flex items-center justify-center text-cyan-300 shadow-inner relative overflow-hidden group">
+                    <i class="ph-fill ph-drop text-2xl transition-transform duration-300 group-hover:scale-110"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-semibold text-base tracking-tight text-white">Liquid Glass</span>
+                        <span class="text-[11px] font-mono uppercase px-2 py-0.5 rounded-full bg-cyan-400/15 text-cyan-200 border border-cyan-300/30">v2.6 Lab</span>
+                    </div>
+                    <p class="text-xs text-white/60">Интерактивный стенд пространственного дизайна</p>
+                </div>
+            </div>
+
+            <!-- Переключатель фоновой среды ("Палитры + Сетка") -->
+            <div class="flex items-center flex-wrap gap-1.5 z-10">
+                <span class="text-xs text-white/50 mr-1.5 hidden md:inline-block">Среда за стеклом:</span>
+                <button onclick="setEnvironment('aurora')" id="env-aurora" class="env-btn liquid-pill px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 text-white ring-2 ring-cyan-300/70">
+                    <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-cyan-400 to-purple-500"></span>
+                    Северное сияние
+                </button>
+                <button onclick="setEnvironment('cyberpunk')" id="env-cyberpunk" class="env-btn liquid-pill px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 text-white/75 hover:text-white">
+                    <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-fuchsia-500 to-amber-400"></span>
+                    Киберпанк
+                </button>
+                <button onclick="setEnvironment('ocean')" id="env-ocean" class="env-btn liquid-pill px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 text-white/75 hover:text-white">
+                    <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-blue-600 to-teal-300"></span>
+                    Глубокий океан
+                </button>
+                <button onclick="setEnvironment('sunset')" id="env-sunset" class="env-btn liquid-pill px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 text-white/75 hover:text-white">
+                    <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-rose-500 to-orange-300"></span>
+                    Тёплый закат
+                </button>
+                <button onclick="setEnvironment('grid')" id="env-grid" class="env-btn liquid-pill px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 text-cyan-200 border-cyan-300/40 hover:text-white">
+                    <i class="ph ph-grid-four text-sm"></i>
+                    Сетка + Текст
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ==========================================
+         MAIN CONTENT & WORKSPACE
+         ========================================== -->
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-8">
+
+        <!-- Hero заголовок с интерактивной стеклянной линзой-бегунком -->
+        <section class="mb-8 flex flex-col lg:flex-row items-start lg:items-end justify-between gap-6">
+            <div class="max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full liquid-pill text-xs text-cyan-100 mb-4">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                    <span>Живая оптика, каустика и динамическое преломление</span>
+                </div>
+                <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-[1.12]">
+                    Дизайн-система <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-teal-300">«Жидкое стекло»</span>
+                </h1>
+                <p class="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">
+                    В отличие от плоского матового стекла (Glassmorphism), <strong class="text-white font-medium">Liquid Glass</strong> имитирует физическую линзу и поверхностное натяжение капли: свет изгибается на краях, блики реагируют на угол обзора, а фон преломляется с эффектом жидкой дисперсии.
+                </p>
+            </div>
+
+            <!-- Быстрые пресеты материала ("Волшебные кнопки") -->
+            <div class="w-full lg:w-auto">
+                <div class="text-xs font-medium uppercase tracking-wider text-white/50 mb-2 flex items-center gap-1.5">
+                    <i class="ph-fill ph-sliders-horizontal text-cyan-300"></i>
+                    Быстрые эталоны материала (Пресеты):
+                </div>
+                <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+                    <button onclick="applyPreset('dew')" id="preset-dew" class="preset-btn liquid-pill px-3.5 py-2 rounded-2xl text-xs font-medium text-white flex items-center gap-2">
+                        <i class="ph-fill ph-drop-half-bottom text-cyan-300 text-base"></i>
+                        <div class="text-left">
+                            <div class="font-semibold">Чистая роса</div>
+                            <div class="text-[10px] text-white/55">Сильная линза • Прозрачная</div>
+                        </div>
+                    </button>
+                    <button onclick="applyPreset('ice')" id="preset-ice" class="preset-btn liquid-pill px-3.5 py-2 rounded-2xl text-xs font-medium text-white flex items-center gap-2">
+                        <i class="ph-fill ph-snowflake text-sky-200 text-base"></i>
+                        <div class="text-left">
+                            <div class="font-semibold">Матовый лёд</div>
+                            <div class="text-[10px] text-white/55">Глубокий блюр • Без искажений</div>
+                        </div>
+                    </button>
+                    <button onclick="applyPreset('mercury')" id="preset-mercury" class="preset-btn liquid-pill px-3.5 py-2 rounded-2xl text-xs font-medium text-white flex items-center gap-2">
+                        <i class="ph-fill ph-planet text-purple-300 text-base"></i>
+                        <div class="text-left">
+                            <div class="font-semibold">Густая ртуть</div>
+                            <div class="text-[10px] text-white/55">Яркий блик • Высокая плотность</div>
+                        </div>
+                    </button>
+                    <button onclick="applyPreset('lens')" id="preset-lens" class="preset-btn liquid-pill px-3.5 py-2 rounded-2xl text-xs font-medium text-white flex items-center gap-2">
+                        <i class="ph-fill ph-aperture text-emerald-300 text-base"></i>
+                        <div class="text-left">
+                            <div class="font-semibold">Тонкая линза</div>
+                            <div class="text-[10px] text-white/55">Острая грань • Кристалл</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             MAIN WORKSPACE: CONTROL KNOBS + BENTO SHOWCASE
+             ========================================== -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- ==========================================
+                 LEFT COLUMN: ПУЛЬТ УПРАВЛЕНИЯ ("РУЧКИ")
+                 ========================================== -->
+            <aside class="lg:col-span-4 lg:sticky lg:top-6 space-y-5 z-20">
+                <div class="liquid-glass p-6">
+                    <div class="relative z-10">
+                        <!-- Заголовок пульта -->
+                        <div class="flex items-center justify-between pb-4 mb-5 border-b border-white/10">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-cyan-300 border border-white/20">
+                                    <i class="ph-fill ph-faders text-lg"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-base font-semibold text-white leading-tight">Пульт «Ручки стекла»</h2>
+                                    <p class="text-xs text-white/55">Крутите ручки и сравнивайте физику</p>
+                                </div>
+                            </div>
+                            <button onclick="resetToDefault()" class="liquid-pill px-2.5 py-1 rounded-lg text-xs text-white/75 hover:text-white flex items-center gap-1" title="Сбросить настройки">
+                                <i class="ph ph-arrow-counter-clockwise"></i>
+                                Сброс
+                            </button>
+                        </div>
+
+                        <!-- Интерактивные ручки-слайдеры -->
+                        <div class="space-y-4">
+                            
+                            <!-- 1. Размытие (Backdrop Blur) -->
+                            <div class="group">
+                                <div class="flex justify-between items-center text-xs mb-1.5">
+                                    <label for="ctrl-blur" class=" font-medium text-white/90 flex items-center gap-1.5">
+                                        <i class="ph ph-circles-three-plus text-cyan-300"></i>
+                                        Размытие (Backdrop Blur)
+                                    </label>
+                                    <span id="val-blur" class="font-mono text-cyan-200 bg-white/10 px-2 py-0.5 rounded-md border border-white/10">18px</span>
+                                </div>
+                                <input id="ctrl-blur" type="range" min="0" max="40" step="1" value="18" class="glass-slider" oninput="updateGlassFromControls()">
+                                <div class="flex justify-between text-[10px] text-white/40 mt-1">
+                                    <span>Чистая линза (0px)</span>
+                                    <span>Морозный туман (40px)</span>
+                                </div>
+                            </div>
+
+                            <!-- 2. Жидкая рефракция (SVG Displacement) -->
+                            <div class="group">
+                                <div class="flex justify-between items-center text-xs mb-1.5">
+                                    <label for="ctrl-refraction" class="font-medium text-white/90 flex items-center gap-1.5">
+                                        <i class="ph ph-waves text-purple-300"></i>
+                                        Жидкая рефракция (SVG Искажение)
+                                    </label>
+                                    <span id="val-refraction" class="font-mono text-purple-200 bg-white/10 px-2 py-0.5 rounded-md border border-white/10">18</span>
+                                </div>
+                                <input id="ctrl-refraction" type="range" min="0" max="45" step="1" value="18" class="glass-slider" oninput="updateGlassFromControls()">
+                                <div class="flex justify-between text-[10px] text-white/40 mt-1">
+                                    <span>Плоское стекло (0)</span>
+                                    <span>Волна капли (45)</span>
+                                </div>
+                            </div>
+
+                            <!-- 3. Плотность поверхности (Surface Opacity) -->
+                            <div class="group">
+                                <div class="flex justify-between items-center text-xs mb-1.5">
+                                    <label for="ctrl-opacity" class="font-medium text-white/90 flex items-center gap-1.5">
+                                        <i class="ph ph-drop-half text-sky-300"></i>
+                                        Плотность среды (Opacity)
+                                    </label>
+                                    <span id="val-opacity" class="font-mono text-sky-200 bg-white/10 px-2 py-0.5 rounded-md border border-white/10">9%</span>
+                                </div>
+                                <input id="ctrl-opacity" type="range" min="0.02" max="0.45" step="0.01" value="0.09" class="glass-slider" oninput="updateGlassFromControls()">
+                                <div class="flex justify-between text-[10px] text-white/40 mt-1">
+                                    <span>Невесомая (2%)</span>
+                                    <span>Молочный кварц (45%)</span>
+                                </div>
+                            </div>
+
+                            <!-- 4. Блик грани (Specular Rim Light) -->
+                            <div class="group">
+                                <div class="flex justify-between items-center text-xs mb-1.5">
+                                    <label for="ctrl-rim" class="font-medium text-white/90 flex items-center gap-1.5">
+                                        <i class="ph ph-sparkle text-amber-300"></i>
+                                        Блик 3D-грани (Specular Rim)
+                                    </label>
+                                    <span id="val-rim" class="font-mono text-amber-200 bg-white/10 px-2 py-0.5 rounded-md border border-white/10">55%</span>
+                                </div>
+                                <input id="ctrl-rim" type="range" min="0" max="1" step="0.02" value="0.55" class="glass-slider" oninput="updateGlassFromControls()">
+                                <div class="flex justify-between text-[10px] text-white/40 mt-1">
+                                    <span>Без фаски (0%)</span>
+                                    <span>Алмазный кант (100%)</span>
+                                </div>
+                            </div>
+
+                            <!-- 5. Кривизна капли (Border Radius) -->
+                            <div class="group">
+                                <div class="flex justify-between items-center text-xs mb-1.5">
+                                    <label for="ctrl-radius" class="font-medium text-white/90 flex items-center gap-1.5">
+                                        <i class="ph ph-bounding-box text-emerald-300"></i>
+                                        Натяжение капли (Radius)
+                                    </label>
+                                    <span id="val-radius" class="font-mono text-emerald-200 bg-white/10 px-2 py-0.5 rounded-md border border-white/10">28px</span>
+                                </div>
+                                <input id="ctrl-radius" type="range" min="6" max="48" step="1" value="28" class="glass-slider" oninput="updateGlassFromControls()">
+                                <div class="flex justify-between text-[10px] text-white/40 mt-1">
+                                    <span>Острая плитка (6px)</span>
+                                    <span>Органическая капля (48px)</span>
+                                </div>
+                            </div>
+
+                            <!-- 6. Насыщенность преломления (Saturation) -->
+                            <div class="group">
+                                <div class="flex justify-between items-center text-xs mb-1.5">
+                                    <label for="ctrl-saturate" class="font-medium text-white/90 flex items-center gap-1.5">
+                                        <i class="ph ph-palette text-pink-300"></i>
+                                        Сочность спектра (Saturation)
+                                    </label>
+                                    <span id="val-saturate" class="font-mono text-pink-200 bg-white/10 px-2 py-0.5 rounded-md border border-white/10">170%</span>
+                                </div>
+                                <input id="ctrl-saturate" type="range" min="100" max="260" step="5" value="170" class="glass-slider" oninput="updateGlassFromControls()">
+                                <div class="flex justify-between text-[10px] text-white/40 mt-1">
+                                    <span>Нейтральная (100%)</span>
+                                    <span>Неоновая призма (260%)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Дополнительные тумблеры оптики -->
+                        <div class="mt-5 pt-4 border-t border-white/10 space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-white/80 flex items-center gap-1.5">
+                                    <i class="ph ph-rainbow text-cyan-300"></i>
+                                    Хроматический радужный кант
+                                </span>
+                                <button id="toggle-chromatic" onclick="toggleChromatic()" class="w-11 h-6 rounded-full bg-cyan-400/30 border border-cyan-300/60 p-0.5 flex items-center transition-all duration-300 justify-end">
+                                    <span class="w-4 h-4 rounded-full bg-white shadow-md"></span>
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-white/80 flex items-center gap-1.5">
+                                    <i class="ph ph-play-circle text-purple-300"></i>
+                                    Живое течение волны (SVG Flow)
+                                </span>
+                                <button id="toggle-flow" onclick="toggleLiquidFlow()" class="w-11 h-6 rounded-full bg-cyan-400/30 border border-cyan-300/60 p-0.5 flex items-center transition-all duration-300 justify-end">
+                                    <span class="w-4 h-4 rounded-full bg-white shadow-md"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Интерактивная шторка «Сравнение: Обычный Блюр vs Liquid Glass» -->
+                <div class="liquid-glass p-5">
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-cyan-200 flex items-center gap-1.5">
+                                <i class="ph-fill ph-magnifying-glass-plus"></i>
+                                Перетаскиваемая капля-линза
+                            </span>
+                            <span class="text-[11px] text-white/50">Подвигайте за каплю вправо ↓</span>
+                        </div>
+                        <p class="text-xs text-white/65 leading-relaxed">
+                            Наведите или перетащите круглую каплю поверх карточек справа, чтобы увидеть двойное преломление света (стекло поверх стекла).
+                        </p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ==========================================
+                 RIGHT COLUMN: BENTO GRID UI SHOWCASE
+                 ========================================== -->
+            <div class="lg:col-span-8 space-y-6 relative">
+
+                <!-- Перетаскиваемая плавающая капля-линза (Magnifier Drop) -->
+                <div id="floating-drop" 
+                     class="liquid-glass fixed sm:absolute z-30 w-28 h-28 rounded-full cursor-grab active:cursor-grabbing flex flex-col items-center justify-center text-center select-none shadow-2xl"
+                     style="top: -18px; right: 24px; border-radius: 9999px !important; backdrop-filter: blur(6px) saturate(220%) contrast(115%);"
+                     title="Перетащите каплю в любое место экрана">
+                    <i class="ph-fill ph-hand-grabbing text-cyan-200 text-lg mb-0.5 pointer-events-none"></i>
+                    <span class="text-[10px] font-semibold tracking-tight text-white/90 leading-tight pointer-events-none">Живая<br>капля</span>
+                </div>
+
+                <!-- ВЕРХНИЙ РЯД BENTO: Музыкальный плеер + Пространственная карта -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- 1. МУЗЫКАЛЬНЫЙ ПЛЕЕР (Glass Audio Widget) -->
+                    <article class="liquid-glass p-6 flex flex-col justify-between">
+                        <div class="relative z-10">
+                            <!-- Верхняя строка статуса -->
+                            <div class="flex items-center justify-between mb-5">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2.5 py-1 rounded-full liquid-pill text-[11px] font-medium text-cyan-200 flex items-center gap-1.5">
+                                        <i class="ph-fill ph-speaker-high animate-pulse"></i>
+                                        Spatial Audio • Dolby
+                                    </span>
+                                </div>
+                                <button onclick="cycleAudioQuality(this)" class="liquid-pill px-2.5 py-1 rounded-lg text-[11px] font-mono text-white/80 hover:text-white" title="Сменить профиль звука">
+                                    Lossless 24-bit
+                                </button>
+                            </div>
+
+                            <!-- Обложка альбома со стеклянным оверлеем и живым эквалайзером -->
+                            <div class="flex items-center gap-4 mb-5">
+                                <div class="relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 shadow-lg border border-white/25 group">
+                                    <div class=" inset-0 w-full h-full bg-gradient-to-br from-cyan-400 via-indigo-500 to-fuchsia-600 flex items-center justify-center">
+                                        <i class="ph-fill ph-vinyl-record text-4xl text-white/90 animate-spin" style="animation-duration: 9s;" id="vinyl-icon"></i>
+                                    </div>
+                                    <!-- Стеклянный бейдж поверх обложки -->
+                                    <div class="absolute inset-x-1.5 bottom-1.5 py-0.5 rounded-lg bg-black/30 backdrop-blur-md border border-white/20 text-[9px] text-center font-mono text-white/90">
+                                        HQ GLASS
+                                    </div>
+                                </div>
+
+                                <div class="min-w-0 flex-1">
+                                    <h3 id="track-title" class="text-lg font-bold text-white truncate">Кристальная Рефракция</h3>
+                                    <p id="track-artist" class="text-xs text-white/65 truncate mt-0.5">Синтез Света & Каустика</p>
+                                    
+                                    <!-- Жидкий эквалайзер -->
+                                    <div id="equalizer" class="mt-3 h-6 flex items-end gap-1">
+                                        <span class="eq-bar w-1.5 rounded-full bg-cyan-300/90" style="animation-delay: 0.0s"></span>
+                                        <span class="eq-bar w-1.5 rounded-full bg-cyan-300/90" style="animation-delay: 0.2s"></span>
+                                        <span class="eq-bar w-1.5 rounded-full bg-sky-300/90" style="animation-delay: 0.4s"></span>
+                                        <span class="eq-bar w-1.5 rounded-full bg-indigo-300/90" style="animation-delay: 0.1s"></span>
+                                        <span class="eq-bar w-1.5 rounded-full bg-purple-300/90" style="animation-delay: 0.35s"></span>
+                                        <span class="eq-bar w-1.5 rounded-full bg-pink-300/90" style="animation-delay: 0.15s"></span>
+                                        <span class="eq-bar w-1.5 rounded-full bg-cyan-300/90" style="animation-delay: 0.45s"></span>
+                                        <span class="eq-bar w-1.5 rounded-full bg-teal-300/90" style="animation-delay: 0.25s"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ручка-скраббер дорожки трека -->
+                            <div class="space-y-1.5 mb-5">
+                                <input id="track-scrubber" type="range" min="0" max="224" value="86" class="glass-slider" oninput="updateTrackTime(this.value)">
+                                <div class="flex justify-between text-[11px] font-mono text-white/55">
+                                    <span id="track-current">01:26</span>
+                                    <span>03:44</span>
+                                </div>
+                            </div>
+
+                            <!-- Кнопки управления плеером -->
+                            <div class="flex items-center justify-between">
+                                <button onclick="toggleLike(this)" class="liquid-pill w-10 h-10 rounded-full flex items-center justify-center text-white/75 hover:text-rose-400">
+                                    <i class="ph-fill ph-heart text-lg"></i>
+                                </button>
+                                <div class="flex items-center gap-3">
+                                    <button onclick="prevTrack()" class="liquid-pill w-10 h-10 rounded-full flex items-center justify-center text-white">
+                                        <i class="ph-fill ph-skip-back text-lg"></i>
+                                    </button>
+                                    <button id="play-btn" onclick="togglePlay()" class="liquid-pill w-13 h-13 px-4 py-3.5 rounded-2xl flex items-center justify-center text-white bg-white/20 border-white/40 shadow-lg">
+                                        <i id="play-icon" class="ph-fill ph-pause text-xl"></i>
+                                    </button>
+                                    <button onclick="nextTrack()" class="liquid-pill w-10 h-10 rounded-full flex items-center justify-center text-white">
+                                        <i class="ph-fill ph-skip-forward text-lg"></i>
+                                    </button>
+                                </div>
+                                <button onclick="toggleMute(this)" class="liquid-pill w-10 h-10 rounded-full flex items-center justify-center text-white/75 hover:text-cyan-300">
+                                    <i class="ph-fill ph-Waveform text-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 2. ФИНАНСОВАЯ 3D-КАРТА (Spatial Wallet Card с динамическим бликом) -->
+                    <article id="tilt-card-wrapper" class="perspective-1000 flex flex-col">
+                        <div id="tilt-card" class="liquid-glass p-6 flex-1 flex flex-col justify-between relative overflow-hidden cursor-pointer select-none"
+                             style="transform-style: preserve-3d; transition: transform 0.15s ease-out;">
+                            
+                            <!-- Динамический блик, следующий за мышью по поверхности карты -->
+                            <div id="card-glare" class="absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-300 z-10"></div>
+
+                            <div class="relative z-20 flex items-center justify-between">
+                                <div>
+                                    <span class="text-[11px] font-mono uppercase tracking-widest text-white/60">Spatial Pay • Titanium Glass</span>
+                                    <div class="text-2xl font-bold tracking-tight text-white mt-1 flex items-center gap-2">
+                                        <span id="wallet-balance">482 950 ₽</span>
+                                        <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-200 border border-emerald-300/30">+14.2%</span>
+                                    </div>
+                                </div>
+                                <!-- Иконка чипа с радужным отливом -->
+                                <div class="w-12 h-9 rounded-xl bg-gradient-to-tr from-amber-200/40 via-cyan-200/40 to-pink-300/40 border border-white/40 flex items-center justify-center backdrop-blur-md shadow-inner">
+                                    <i class="ph ph-contactless-payment text-2xl text-white"></i>
+                                </div>
+                            </div>
+
+                            <!-- Интерактивный мини-переключатель валюты/кэшбэка ("Ручка лимита") -->
+                            <div class="relative z-20 my-5 p-3.5 rounded-2xl bg-white/5 border border-white/15">
+                                <div class="flex justify-between items-center text-xs mb-1.5">
+                                    <span class="text-white/75">Дневной лимит свайпа:</span>
+                                    <span id="limit-val" class="font-mono font-semibold text-cyan-200">150 000 ₽</span>
+                                </div>
+                                <input type="range" min="10000" max="500000" step="10000" value="150000" class="glass-slider" 
+                                       oninput="document.getElementById('limit-val').textContent = Number(this.value).toLocaleString('ru-RU') + ' ₽'">
+                            </div>
+
+                            <!-- Нижняя часть карты -->
+                            <div class="relative z-20 flex items-end justify-between pt-1">
+                                <div>
+                                    <div class="font-mono text-sm tracking-[0.22em] text-white/90">•••• 8492</div>
+                                    <div class="text-[11px] text-white/50 mt-0.5">Наведите курсор для 3D-блика</div>
+                                </div>
+                                <div class="flex -space-x-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-cyan-400/50 backdrop-blur-md border border-white/50"></div>
+                                    <div class="w-8 h-8 rounded-full bg-purple-400/50 backdrop-blur-md border border-white/50"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                </div>
+
+                <!-- СРЕДНИЙ РЯД BENTO: Умный дом и Климат-контроль с интерактивными ручками -->
+                <article class="liquid-glass p-6">
+                    <div class="relative z-10">
+                        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <i class="ph-fill ph-thermometer-simple text-cyan-300 text-xl"></i>
+                                    <h3 class="text-lg font-bold text-white">Умный дом • Микроклимат и Свет</h3>
+                                </div>
+                                <p class="text-xs text-white/60 mt-0.5">Тактильные стеклянные капсулы, круговая шкала и пружинные тумблеры</p>
+                            </div>
+
+                            <!-- Переключатели сцен освещения -->
+                            <div class="flex items-center gap-2">
+                                <button onclick="setRoomMode(this, 'Уютный вечер', '23.5°C', '48%')" class="room-mode-btn liquid-pill px-3 py-1.5 rounded-xl text-xs font-medium text-white ring-1 ring-cyan-300/60">
+                                    Уютный вечер
+                                </button>
+                                <button onclick="setRoomMode(this, 'Глубокий фокус', '21.0°C', '55%')" class="room-mode-btn liquid-pill px-3 py-1.5 rounded-xl text-xs font-medium text-white/70 hover:text-white">
+                                    Фокус
+                                </button>
+                                <button onclick="setRoomMode(this, 'Эко-сон', '19.5°C', '60%')" class="room-mode-btn liquid-pill px-3 py-1.5 rounded-xl text-xs font-medium text-white/70 hover:text-white">
+                                    Эко-сон
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                            <!-- Интерактивный круговой регулятор температуры ("Большая ручка") -->
+                            <div class="md:col-span-5 flex flex-col items-center justify-center p-4 rounded-3xl bg-white/5 border border-white/15 relative">
+                                <div class="relative w-40 h-40 rounded-full liquid-pill flex flex-col items-center justify-center shadow-2xl">
+                                    <!-- SVG прогресс-кольцо -->
+                                    <svg class="absolute inset-0 w-full h-full -rotate-90 p-2" viewBox="0 0 120 120">
+                                        <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6" />
+                                        <circle id="temp-ring" cx="60" cy="60" r="52" fill="none" stroke="url(#tempGrad)" stroke-width="6" 
+                                                stroke-dasharray="326.7" stroke-dashoffset="110" stroke-linecap="round"
+                                                style="transition: stroke-dashoffset 0.25s ease;" />
+                                        <defs>
+                                            <linearGradient id="tempGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" stop-color="#38bdf8" />
+                                                <stop offset="50%" stop-color="#a855f7" />
+                                                <stop offset="100%" stop-color="#fb7185" />
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                    <span class="text-[10px] font-mono uppercase tracking-widest text-white/50">Гостиная</span>
+                                    <span id="temp-display" class="text-3xl font-bold tracking-tight text-white my-0.5">23.5°C</span>
+                                    <span id="humidity-display" class="text-xs text-cyan-200 flex items-center gap-1">
+                                        <i class="ph-fill ph-drop"></i> 48% влажн.
+                                    </span>
+                                </div>
+
+                                <!-- Ручка-ползунок для плавной подстройки температуры -->
+                                <div class="w-full mt-4 px-2">
+                                    <div class="flex justify-between text-[11px] text-white/60 mb-1">
+                                        <span>16°C</span>
+                                        <span class="text-white/90 font-medium">Ручка термостата</span>
+                                        <span>30°C</span>
+                                    </div>
+                                    <input id="temp-slider" type="range" min="16" max="30" step="0.5" value="23.5" class="glass-slider" oninput="updateThermostat(this.value)">
+                                </div>
+                            </div>
+
+                            <!-- Сетка умных устройств со стеклянными тумблерами и диммерами -->
+                            <div class="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                <!-- Устройство 1: Панорамное затемнение окна -->
+                                <div class="p-4 rounded-2xl liquid-pill flex flex-col justify-between gap-3">
+                                    <div class="flex items-center justify-between">
+                                        <div class="w-9 h-9 rounded-xl bg-cyan-400/20 border border-cyan-300/30 flex items-center justify-center text-cyan-200">
+                                            <i class="ph-fill ph-sun-horizon text-lg"></i>
+                                        </div>
+                                        <span id=" electro-tint-val" class="text-xs font-mono text-cyan-200">65%</span>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-semibold text-white">Электрохромные окна</div>
+                                        <div class="text-[11px] text-white/55 mb-2">Тонировка жидких кристаллов</div>
+                                        <input type="range" min="0" max="100" value="65" class="glass-slider"
+                                               oninput="document.getElementById(' electro-tint-val').textContent = this.value + '%'">
+                                    </div>
+                                </div>
+
+                                <!-- Устройство 2: Контурная подсветка -->
+                                <div class="p-4 rounded-2xl liquid-pill flex flex-col justify-between gap-3">
+                                    <div class="flex items-center justify-between">
+                                        <div class="w-9 h-9 rounded-xl bg-purple-400/20 border border-purple-300/30 flex items-center justify-center text-purple-200">
+                                            <i class="ph-fill ph-lightbulb-filament text-lg"></i>
+                                        </div>
+                                        <span id="ambient-val" class="text-xs font-mono text-purple-200">80%</span>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-semibold text-white">Неоновый каустик</div>
+                                        <div class="text-[11px] text-white/55 mb-2">Интенсивность свечения</div>
+                                        <input type="range" min="0" max="100" value="80" class="glass-slider"
+                                               oninput="document.getElementById('ambient-val').textContent = this.value + '%'">
+                                    </div>
+                                </div>
+
+                                <!-- Устройство 3: Увлажнитель воздуха (Тумблер) -->
+                                <div onclick="toggleDeviceCard(this)" class="p-4 rounded-2xl liquid-pill flex items-center justify-between cursor-pointer">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-xl bg-emerald-400/20 border border-emerald-300/30 flex items-center justify-center text-emerald-200">
+                                            <i class="ph-fill ph-wind text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-semibold text-white">Ионизация пара</div>
+                                            <div class="device-status text-[11px] text-emerald-300">Активно • Тихий режим</div>
+                                        </div>
+                                    </div>
+                                    <div class="device-switch w-11 h-6 rounded-full bg-emerald-400/30 border border-emerald-300/60 p-0.5 flex items-center justify-end transition-all">
+                                        <span class="w-4 h-4 rounded-full bg-white shadow"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Устройство 4: Акустический купол (Тумблер) -->
+                                <div onclick="toggleDeviceCard(this)" class="p-4 rounded-2xl liquid-pill flex items-center justify-between cursor-pointer">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-xl bg-amber-400/20 border border-amber-300/30 flex items-center justify-center text-amber-200">
+                                            <i class="ph-fill ph-shield-check text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-semibold text-white">Шумоподавление</div>
+                                            <div class="device-status text-[11px] text-emerald-300">Активно • -32 дБ</div>
+                                        </div>
+                                    </div>
+                                    <div class="device-switch w-11 h-6 rounded-full bg-emerald-400/30 border border-emerald-300/60 p-0.5 flex items-center justify-end transition-all">
+                                        <span class="w-4 h-4 rounded-full bg-white shadow"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- НИЖНИЙ РЯД: LIVE CSS & SVG CODE GENERATOR -->
+                <section class="liquid-glass p-6">
+                    <div class="relative z-10">
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-cyan-400/15 border border-cyan-300/30 flex items-center justify-center text-cyan-300">
+                                    <i class="ph-fill ph-code text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-white">Генератор CSS + SVG кода в реальном времени</h3>
+                                    <p class="text-xs text-white/55">Код автоматически обновляется при вращении любой «ручки» на пульте</p>
+                                </div>
+                            </div>
+
+                            <button id="copy-code-btn" onclick="copyGeneratedCode()" class="liquid-pill px-4 py-2 rounded-xl text-xs font-semibold text-cyan-200 hover:text-white flex items-center gap-2 border-cyan-300/40">
+                                <i id="copy-icon" class="ph ph-copy text-base"></i>
+                                <span id="copy-text">Скопировать код</span>
+                            </button>
+                        </div>
+
+                        <div class="rounded-2xl bg-black/45 border border-white/15 p-4 overflow-x-auto">
+                            <pre id="code-output" class="text-xs leading-relaxed text-cyan-100/90 font-mono"></pre>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ==========================================
+         FLOATING SPATIAL OS DOCK (Нижняя док-панель)
+         ========================================== -->
+    <div class="fixed bottom-5 inset-x-0 z-40 flex justify-center px-4 pointer-events-none">
+        <div id="spatial-dock" class="liquid-glass px-4 py-2.5 flex items-center gap-2.5 pointer-events-auto shadow-2xl"
+             style="border-radius: 9999px;">
+            <button onclick="showToast('Открыт модуль «Пространственная Камера»')" class="dock-item liquid-pill w-12 h-12 rounded-2xl flex items-center justify-center text-white relative group">
+                <i class="ph-fill ph-camera text-2xl text-cyan-300"></i>
+                <span class="absolute -top-9 px-2.5 py-1 rounded-lg bg-black/80 backdrop-blur-md text-[11px] text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/15">Камера</span>
+                <span class="absolute bottom-1 w-1 h-1 rounded-full bg-cyan-300"></span>
+            </button>
+            <button onclick="showToast('Синхронизация «Квантовая Галерея»')" class="dock-item liquid-pill w-12 h-12 rounded-2xl flex items-center justify-center text-white relative group">
+                <i class="ph-fill ph-image text-2xl text-purple-300"></i>
+                <span class="absolute -top-9 px-2.5 py-1 rounded-lg bg-black/80 backdrop-blur-md text-[11px] text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/15">Галерея</span>
+            </button>
+            <button onclick="applyPreset('dew'); showToast('Включен пресет «Чистая роса»')" class="dock-item liquid-pill w-12 h-12 rounded-2xl flex items-center justify-center text-white relative group">
+                <i class="ph-fill ph-drop text-2xl text-sky-300"></i>
+                <span class="absolute -top-9 px-2.5 py-1 rounded-lg bg-black/80 backdrop-blur-md text-[11px] text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/15">Роса</span>
+                <span class="absolute bottom-1 w-1 h-1 rounded-full bg-white/70"></span>
+            </button>
+            <div class="w-px h-7 bg-white/15 mx-1"></div>
+            <button onclick="setEnvironment('grid'); showToast('Включена оптическая тестовая сетка')" class="dock-item liquid-pill w-12 h-12 rounded-2xl flex items-center justify-center text-white relative group">
+                <i class="ph-fill ph-grid-four text-2xl text-emerald-300"></i>
+                <span class="absolute -top-9 px-2.5 py-1 rounded-lg bg-black/80 backdrop-blur-md text-[11px] text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/15">Тест рефракции</span>
+            </button>
+            <button onclick="copyGeneratedCode()" class="dock-item liquid-pill w-12 h-12 rounded-2xl flex items-center justify-center text-white relative group">
+                <i class="ph-fill ph-terminal-window text-2xl text-amber-300"></i>
+                <span class="absolute -top-9 px-2.5 py-1 rounded-lg bg-black/80 backdrop-blur-md text-[11px] text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/15">Экспорт CSS</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Стеклянное всплывающее уведомление (Toast) -->
+    <div id="glass-toast" class="fixed top-6 right-6 z-50 liquid-glass px-4 py-3 flex items-center gap-3 pointer-events-none opacity-0 -translate-y-4 transition-all duration-300">
+        <i class="ph-fill ph-sparkle text-cyan-300 text-lg"></i>
+        <span id="toast-message" class="text-xs font-medium text-white">Параметры обновлены</span>
+    </div>
+
+    <!-- ==========================================
+         JAVASCRIPT ENGINE & INTERACTIVITY
+         ========================================== -->
+    <script>
+        // Состояние оптических параметров
+        const state = {
+            blur: 18,
+            refraction: 18,
+            opacity: 0.09,
+            rim: 0.55,
+            radius: 28,
+            saturate: 170,
+            chromatic: 1,
+            liquidFlow: true
+        };
+
+        // Готовые эталонные пресеты ("Чистая роса", "Матовый лед", "Густая ртуть", "Тонкая линза")
+        const presets = {
+            dew: {
+                name: 'Чистая роса',
+                blur: 6,
+                refraction: 32,
+                opacity: 0.05,
+                rim: 0.85,
+                radius: 40,
+                saturate: 210
+            },
+            ice: {
+                name: 'Матовый лёд',
+                blur: 36,
+                refraction: 0,
+                opacity: 0.22,
+                rim: 0.45,
+                radius: 20,
+                saturate: 135
+            },
+            mercury: {
+                name: 'Густая ртуть',
+                blur: 20,
+                refraction: 26,
+                opacity: 0.30,
+                rim: 0.95,
+                radius: 34,
+                saturate: 245
+            },
+            lens: {
+                name: 'Тонкая линза',
+                blur: 10,
+                refraction: 14,
+                opacity: 0.03,
+                rim: 0.70,
+                radius: 16,
+                saturate: 160
+            }
+        };
+
+        // Палитры фоновой среды
+        const environments = {
+            aurora: {
+                bg: '#05070f',
+                gridOpacity: '0.22',
+                blobs: [
+                    'radial-gradient(circle, #06b6d4 0%, #3b82f6 65%, transparent 100%)',
+                    'radial-gradient(circle, #a855f7 0%, #ec4899 65%, transparent 100%)',
+                    'radial-gradient(circle, #10b981 0%, #0ea5e9 65%, transparent 100%)',
+                    'radial-gradient(circle, #6366f1 0%, #2dd4bf 65%, transparent 100%)'
+                ]
+            },
+            cyberpunk: {
+                bg: '#090314',
+                gridOpacity: '0.28',
+                blobs: [
+                    'radial-gradient(circle, #ff007f 0%, #7928ca 65%, transparent 100%)',
+                    'radial-gradient(circle, #00f5d4 0%, #00bbf9 65%, transparent 100%)',
+                    'radial-gradient(circle, #fee440 0%, #f15bb5 65%, transparent 100%)',
+                    'radial-gradient(circle, #9b5de5 0%, #f72585 65%, transparent 100%)'
+                ]
+            },
+            ocean: {
+                bg: '#020b18',
+                gridOpacity: '0.20',
+                blobs: [
+                    'radial-gradient(circle, #0284c7 0%, #1e3a8a 65%, transparent 100%)',
+                    'radial-gradient(circle, #0d9488 0%, #0369a1 65%, transparent 100%)',
+                    'radial-gradient(circle, #38bdf8 0%, #1d4ed8 65%, transparent 100%)',
+                    'radial-gradient(circle, #2dd4bf 0%, #0f766e 65%, transparent 100%)'
+                ]
+            },
+            sunset: {
+                bg: '#14070c',
+                gridOpacity: '0.22',
+                blobs: [
+                    'radial-gradient(circle, #f43f5e 0%, #9f1239 65%, transparent 100%)',
+                    'radial-gradient(circle, #fb923c 0%, #ea580c 65%, transparent 100%)',
+                    'radial-gradient(circle, #facc15 0%, #e11d48 65%, transparent 100%)',
+                    'radial-gradient(circle, #c084fc 0%, #db2777 65%, transparent 100%)'
+                ]
+            },
+            grid: {
+                bg: '#060a12',
+                gridOpacity: '0.92',
+                blobs: [
+                    'radial-gradient(circle, #22d3ee 0%, #0284c7 65%, transparent 100%)',
+                    'radial-gradient(circle, #e879f9 0%, #7e22ce 65%, transparent 100%)',
+                    'radial-gradient(circle, #34d399 0%, #059669 65%, transparent 100%)',
+                    'radial-gradient(circle, #fbbf24 0%, #d97706 65%, transparent 100%)'
+                ]
+            }
+        };
+
+        // 1. Обновление всех CSS-переменных, SVG-фильтра и генератора кода
+        function updateGlassFromControls() {
+            state.blur = parseFloat(document.getElementById('ctrl-blur').value);
+            state.refraction = parseFloat(document.getElementById('ctrl-refraction').value);
+            state.opacity = parseFloat(document.getElementById('ctrl-opacity').value);
+            state.rim = parseFloat(document.getElementById('ctrl-rim').value);
+            state.radius = parseFloat(document.getElementById('ctrl-radius').value);
+            state.saturate = parseFloat(document.getElementById('ctrl-saturate').value);
+
+            const root = document.documentElement;
+            root.style.setProperty('--lg-blur', `${state.blur}px`);
+            root.style.setProperty('--lg-refraction', state.refraction);
+            root.style.setProperty('--lg-opacity', state.opacity);
+            root.style.setProperty('--lg-rim', state.rim);
+            root.style.setProperty('--lg-radius', `${state.radius}px`);
+            root.style.setProperty('--lg-saturate', `${state.saturate}%`);
+
+            // Обновляем подписи значений возле ручек
+            document.getElementById('val-blur').textContent = `${state.blur}px`;
+            document.getElementById('val-refraction').textContent = `${state.refraction}`;
+            document.getElementById('val-opacity').textContent = `${Math.round(state.opacity * 100)}%`;
+            document.getElementById('val-rim').textContent = `${Math.round(state.rim * 100)}%`;
+            document.getElementById('val-radius').textContent = `${state.radius}px`;
+            document.getElementById('val-saturate').textContent = `${state.saturate}%`;
+
+            // Меняем масштаб преломления в реальном SVG-фильтре
+            const displacement = document.getElementById('svg-displacement');
+            if (displacement) {
+                displacement.setAttribute('scale', state.refraction);
+            }
+
+            renderGeneratedCode();
+        }
+
+        // 2. Применение готового пресета
+        function applyPreset(key) {
+            const p = presets[key];
+            if (!p) return;
+
+            document.getElementById('ctrl-blur').value = p.blur;
+            document.getElementById('ctrl-refraction').value = p.refraction;
+            document.getElementById('ctrl-opacity').value = p.opacity;
+            document.getElementById('ctrl-rim').value = p.rim;
+            document.getElementById('ctrl-radius').value = p.radius;
+            document.getElementById('ctrl-saturate').value = p.saturate;
+
+            // Подсветка активной кнопки пресета
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-cyan-300/80');
+            });
+            const activeBtn = document.getElementById(`preset-${key}`);
+            if (activeBtn) activeBtn.classList.add('ring-2', 'ring-cyan-300/80');
+
+            updateGlassFromControls();
+            showToast(`Пресет «${p.name}» применён`);
+        }
+
+        function resetToDefault() {
+            document.getElementById('ctrl-blur').value = 18;
+            document.getElementById('ctrl-refraction').value = 18;
+            document.getElementById('ctrl-opacity').value = 0.09;
+            document.getElementById('ctrl-rim').value = 0.55;
+            document.getElementById('ctrl-radius').value = 28;
+            document.getElementById('ctrl-saturate').value = 170;
+            updateGlassFromControls();
+            showToast('Настройки возвращены к эталону');
+        }
+
+        // 3. Переключение фоновой палитры и режима «Сетка + Текст»
+        function setEnvironment(envKey) {
+            const env = environments[envKey];
+            if (!env) return;
+
+            document.body.style.backgroundColor = env.bg;
+            document.getElementById('optical-test-layer').style.opacity = env.gridOpacity;
+
+            env.blobs.forEach((grad, idx) => {
+                const blob = document.getElementById(`blob-${idx + 1}`);
+                if (blob) blob.style.background = grad;
+            });
+
+            document.querySelectorAll('.env-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-cyan-300/70', 'text-white');
+                btn.classList.add('text-white/75');
+            });
+            const active = document.getElementById(`env-${envKey}`);
+            if (active) {
+                active.classList.add('ring-2', 'ring-cyan-300/70', 'text-white');
+                active.classList.remove('text-white/75');
+            }
+        }
+
+        // 4. Тумблеры хроматической дисперсии и живого течения SVG
+        function toggleChromatic() {
+            state.chromatic = state.chromatic === 1 ? 0 : 1;
+            document.documentElement.style.setProperty('--lg-chromatic', state.chromatic);
+            const btn = document.getElementById('toggle-chromatic');
+            if (state.chromatic) {
+                btn.classList.add('justify-end', 'bg-cyan-400/30', 'border-cyan-300/60');
+                btn.classList.remove('justify-start', 'bg-white/10', 'border-white/20');
+            } else {
+                btn.classList.remove('justify-end', 'bg-cyan-400/30', 'border-cyan-300/60');
+                btn.classList.add('justify-start', 'bg-white/10', 'border-white/20');
+            }
+        }
+
+        function toggleLiquidFlow() {
+            state.liquidFlow = !state.liquidFlow;
+            const btn = document.getElementById('toggle-flow');
+            if (state.liquidFlow) {
+                btn.classList.add('justify-end', 'bg-cyan-400/30', 'border-cyan-300/60');
+                btn.classList.remove('justify-start', 'bg-white/10', 'border-white/20');
+            } else {
+                btn.classList.remove('justify-end', 'bg-cyan-400/30', 'border-cyan-300/60');
+                btn.classList.add('justify-start', 'bg-white/10', 'border-white/20');
+            }
+        }
+
+        // Плавная анимация SVG-турбулентности для эффекта живой жидкости
+        let phase = 0;
+        function animateLiquidRefraction() {
+            if (state.liquidFlow && state.refraction > 0) {
+                phase += 0.004;
+                const freqX = (0.012 + Math.sin(phase) * 0.0025).toFixed(4);
+                const freqY = (0.015 + Math.cos(phase * 0.8) * 0.0025).toFixed(4);
+                const turb = document.getElementById('svg-turbulence');
+                if (turb) {
+                    turb.setAttribute('baseFrequency', `${freqX} ${freqY}`);
+                }
+            }
+            requestAnimationFrame(animateLiquidRefraction);
+        }
+
+        // 5. Генерация живого CSS + SVG кода
+        function renderGeneratedCode() {
+            const topRim = (state.rim * 0.95).toFixed(2);
+            const sideRim = (state.rim * 0.6).toFixed(2);
+            const borderAlpha = (state.rim * 0.32).toFixed(2);
+
+            const code = `/* 1. CSS-стиль поверхности Liquid Glass */
+.liquid-glass-card {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, ${(state.opacity * 1.45).toFixed(3)}) 0%,
+    rgba(255, 255, 255, ${(state.opacity * 0.45).toFixed(3)}) 50%,
+    rgba(255, 255, 255, ${(state.opacity * 0.85).toFixed(3)}) 100%
+  );
+  backdrop-filter: blur(${state.blur}px) saturate(${state.saturate}%);
+  -webkit-backdrop-filter: blur(${state.blur}px) saturate(${state.saturate}%);
+  border-radius: ${state.radius}px;
+  border: 1px solid rgba(255, 255, 255, ${borderAlpha});
+  box-shadow:
+    0 24px 48px -12px rgba(0, 0, 0, 0.55),
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, ${topRim}),
+    inset 1.5px 0 2px 0 rgba(255, 255, 255, ${sideRim}),
+    inset 0 0 28px 0 rgba(255, 255, 255, ${(state.opacity * 0.6).toFixed(2)});
+}
+
+/* 2. SVG-фильтр оптической рефракции (scale = ${state.refraction}) */
+<svg width="0" height="0">
+  <filter id="liquid-refraction">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.015" numOctaves="2" result="noise" />
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="${state.refraction}" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>`;
+
+            document.getElementById('code-output').textContent = code;
+        }
+
+        function copyGeneratedCode() {
+            const codeText = document.getElementById('code-output').textContent;
+            const textarea = document.createElement('textarea');
+            textarea.value = codeText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            const copyText = document.getElementById('copy-text');
+            const copyIcon = document.getElementById('copy-icon');
+            copyText.textContent = 'Скопировано в буфер!';
+            copyIcon.className = 'ph-fill ph-check-circle text-emerald-300 text-base';
+            showToast('CSS и SVG код скопирован');
+
+            setTimeout(() => {
+                copyText.textContent = 'Скопировать код';
+                copyIcon.className = 'ph ph-copy text-base';
+            }, 2200);
+        }
+
+        // 6. Интерактивность Музыкального плеера
+        const tracks = [
+            { title: 'Кристальная Рефракция', artist: 'Синтез Света & Каустика' },
+            { title: 'Поверхностное Натяжение', artist: 'Aether Glass Ensemble' },
+            { title: 'Северный Спектр (n=1.52)', artist: 'Оптический Резонанс' }
+        ];
+        let currentTrackIdx = 0;
+        let isPlaying = true;
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const playIcon = document.getElementById('play-icon');
+            const eq = document.getElementById('equalizer');
+            const vinyl = document.getElementById('vinyl-icon');
+
+            if (isPlaying) {
+                playIcon.className = 'ph-fill ph-pause text-xl';
+                eq.classList.remove('eq-paused');
+                vinyl.style.animationPlayState = 'running';
+            } else {
+                playIcon.className = 'ph-fill ph-play text-xl';
+                eq.classList.add('eq-paused');
+                vinyl.style.animationPlayState = 'paused';
+            }
+        }
+
+        function nextTrack() {
+            currentTrackIdx = (currentTrackIdx + 1) % tracks.length;
+            applyTrackInfo();
+        }
+
+        function prevTrack() {
+            currentTrackIdx = (currentTrackIdx - 1 + tracks.length) % tracks.length;
+            applyTrackInfo();
+        }
+
+        function applyTrackInfo() {
+            document.getElementById('track-title').textContent = tracks[currentTrackIdx].title;
+            document.getElementById('track-artist').textContent = tracks[currentTrackIdx].artist;
+            document.getElementById('track-scrubber').value = 0;
+            updateTrackTime(0);
+        }
+
+        function updateTrackTime(sec) {
+            const m = String(Math.floor(sec / 60)).padStart(2, '0');
+            const s = String(sec % 60).padStart(2, '0');
+            document.getElementById('track-current').textContent = `${m}:${s}`;
+        }
+
+        function toggleLike(btn) {
+            btn.classList.toggle('text-rose-400');
+            btn.classList.toggle('text-white/75');
+        }
+
+        function toggleMute(btn) {
+            btn.classList.toggle('text-cyan-300');
+        }
+
+        function cycleAudioQuality(btn) {
+            const modes = ['Lossless 24-bit', 'Spatial 360°', 'Hi-Res 192kHz'];
+            const next = modes[(modes.indexOf(btn.textContent.trim()) + 1) % modes.length];
+            btn.textContent = next;
+        }
+
+        // 7. 3D Tilt & Glare на Финансовой карте
+        const tiltCard = document.getElementById('tilt-card');
+        const cardGlare = document.getElementById('card-glare');
+
+        tiltCard.addEventListener('mousemove', (e) => {
+            const rect = tiltCard.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const rotateX = ((y - centerY) / centerY) * -10;
+            const rotateY = ((x - centerX) / centerX) * 10;
+
+            tiltCard.style.transform = `perspective(900px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.015, 1.015, 1.015)`;
+            
+            const glareX = (x / rect.width) * 100;
+            const glareY = (y / rect.height) * 100;
+            cardGlare.style.opacity = '1';
+            cardGlare.style.background = `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.48) 0%, rgba(165,243,252,0.18) 32%, transparent 68%)`;
+        });
+
+        tiltCard.addEventListener('mouseleave', () => {
+            tiltCard.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+            cardGlare.style.opacity = '0';
+        });
+
+        // 8. Умный дом: Термостат и тумблеры
+        function updateThermostat(val) {
+            document.getElementById('temp-display').textContent = `${parseFloat(val).toFixed(1)}°C`;
+            const ratio = (val - 16) / (30 - 16);
+            const circumference = 326.7;
+            const offset = circumference - ratio * (circumference * 0.82);
+            document.getElementById('temp-ring').style.strokeDashoffset = offset;
+        }
+
+        function setRoomMode(btn, title, temp, hum) {
+            document.querySelectorAll('.room-mode-btn').forEach(b => {
+                b.classList.remove('ring-1', 'ring-cyan-300/60', 'text-white');
+                b.classList.add('text-white/70');
+            });
+            btn.classList.add('ring-1', 'ring-cyan-300/60', 'text-white');
+            btn.classList.remove('text-white/70');
+
+            const numericTemp = parseFloat(temp);
+            document.getElementById('temp-slider').value = numericTemp;
+            updateThermostat(numericTemp);
+            document.getElementById('humidity-display').innerHTML = `<i class="ph-fill ph-drop"></i> ${hum} влажн.`;
+            showToast(`Режим климата: «${title}»`);
+        }
+
+        function toggleDeviceCard(card) {
+            const sw = card.querySelector('.device-switch');
+            const st = card.querySelector('.device-status');
+            const isOn = sw.classList.contains('justify-end');
+
+            if (isOn) {
+                sw.classList.remove('justify-end', 'bg-emerald-400/30', 'border-emerald-300/60');
+                sw.classList.add('justify-start', 'bg-white/10', 'border-white/20');
+                st.textContent = 'В режиме ожидания';
+                st.className = 'device-status text-[11px] text-white/45';
+            } else {
+                sw.classList.add('justify-end', 'bg-emerald-400/30', 'border-emerald-300/60');
+                sw.classList.remove('justify-start', 'bg-white/10', 'border-white/20');
+                st.textContent = 'Активно • Оптимально';
+                st.className = 'device-status text-[11px] text-emerald-300';
+            }
+        }
+
+        // 9. Перетаскивание круглой капли-линзы (Floating Drop)
+        const drop = document.getElementById('floating-drop');
+        let isDraggingDrop = false;
+        let dropOffsetX = 0;
+        let dropOffsetY = 0;
+
+        drop.addEventListener('pointerdown', (e) => {
+            isDraggingDrop = true;
+            const rect = drop.getBoundingClientRect();
+            dropOffsetX = e.clientX - rect.left;
+            dropOffsetY = e.clientY - rect.top;
+            drop.style.position = 'fixed';
+            drop.style.left = `${rect.left}px`;
+            drop.style.top = `${rect.top}px`;
+            drop.style.right = 'auto';
+            drop.setPointerCapture(e.pointerId);
+        });
+
+        drop.addEventListener('pointermove', (e) => {
+            if (!isDraggingDrop) return;
+            drop.style.left = `${e.clientX - dropOffsetX}px`;
+            drop.style.top = `${e.clientY - dropOffsetY}px`;
+        });
+
+        drop.addEventListener('pointerup', () => {
+            isDraggingDrop = false;
+        });
+
+        // 10. Глобальное световое пятно за курсором и увеличение иконок в Док-панели
+        const cursorLight = document.getElementById('cursor-light');
+        window.addEventListener('pointermove', (e) => {
+            cursorLight.style.left = `${e.clientX}px`;
+            cursorLight.style.top = `${e.clientY}px`;
+        });
+
+        const dock = document.getElementById('spatial-dock');
+        const dockItems = document.querySelectorAll('.dock-item');
+
+        dock.addEventListener('mousemove', (e) => {
+            dockItems.forEach(item => {
+                const rect = item.getBoundingClientRect();
+                const itemCenter = rect.left + rect.width / 2;
+                const dist = Math.abs(e.clientX - itemCenter);
+                const scale = Math.max(1, 1.38 - dist / 150);
+                item.style.transform = `translateY(${(1 - scale) * 18}px) scale(${scale.toFixed(2)})`;
+            });
+        });
+
+        dock.addEventListener('mouseleave', () => {
+            dockItems.forEach(item => {
+                item.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Всплывающий тост
+        let toastTimer = null;
+        function showToast(msg) {
+            const toast = document.getElementById('glass-toast');
+            document.getElementById('toast-message').textContent = msg;
+            toast.classList.remove('opacity-0', '-translate-y-4');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-4');
+            }, 2400);
+        }
+
+        // Запуск при загрузке окна
+        window.onload = function () {
+            updateGlassFromControls();
+            animateLiquidRefraction();
+        };
+    </script>
+</body>
+</html>
